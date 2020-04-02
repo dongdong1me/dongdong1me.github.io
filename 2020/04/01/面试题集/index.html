@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Dongdong Guo">
+
+
+
+
+
+<title>题集 | EvaSite</title>
+
+
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo" ><a style="font-weight: bold;"  href="/">Eva&#39;s Site</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default" type="hidden">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Eva&#39;s Site</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">题集</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Dongdong Guo</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 1, 2020&nbsp;&nbsp;0:43:11</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <h3 id="Runtime"><a href="#Runtime" class="headerlink" title="Runtime"></a>Runtime</h3><h4 id="介绍下runtime的内存模型（isa、对象、类、metaclass、结构体的存储信息等）"><a href="#介绍下runtime的内存模型（isa、对象、类、metaclass、结构体的存储信息等）" class="headerlink" title="介绍下runtime的内存模型（isa、对象、类、metaclass、结构体的存储信息等）"></a>介绍下runtime的内存模型（isa、对象、类、metaclass、结构体的存储信息等）</h4><h4 id="为什么要设计metaclass"><a href="#为什么要设计metaclass" class="headerlink" title="为什么要设计metaclass"></a>为什么要设计metaclass</h4><h4 id="class-copyIvarList-amp-class-copyPropertyList区别"><a href="#class-copyIvarList-amp-class-copyPropertyList区别" class="headerlink" title="class_copyIvarList &amp; class_copyPropertyList区别"></a>class_copyIvarList &amp; class_copyPropertyList区别</h4><h4 id="class-rw-t-和-class-ro-t-的区别"><a href="#class-rw-t-和-class-ro-t-的区别" class="headerlink" title="class_rw_t 和 class_ro_t 的区别"></a>class_rw_t 和 class_ro_t 的区别</h4><h4 id="category如何被加载的-两个category的load方法的加载顺序，两个category的同名方法的加载顺序"><a href="#category如何被加载的-两个category的load方法的加载顺序，两个category的同名方法的加载顺序" class="headerlink" title="category如何被加载的,两个category的load方法的加载顺序，两个category的同名方法的加载顺序"></a>category如何被加载的,两个category的load方法的加载顺序，两个category的同名方法的加载顺序</h4><h4 id="category-amp-extension区别，能给NSObject添加Extension吗，结果如何"><a href="#category-amp-extension区别，能给NSObject添加Extension吗，结果如何" class="headerlink" title="category &amp; extension区别，能给NSObject添加Extension吗，结果如何"></a>category &amp; extension区别，能给NSObject添加Extension吗，结果如何</h4><h4 id="消息转发机制，消息转发机制和其他语言的消息机制优劣对比"><a href="#消息转发机制，消息转发机制和其他语言的消息机制优劣对比" class="headerlink" title="消息转发机制，消息转发机制和其他语言的消息机制优劣对比"></a>消息转发机制，消息转发机制和其他语言的消息机制优劣对比</h4><h4 id="在方法调用的时候，方法查询-gt-动态解析-gt-消息转发-之前做了什么"><a href="#在方法调用的时候，方法查询-gt-动态解析-gt-消息转发-之前做了什么" class="headerlink" title="在方法调用的时候，方法查询-&gt; 动态解析-&gt; 消息转发 之前做了什么"></a>在方法调用的时候，方法查询-&gt; 动态解析-&gt; 消息转发 之前做了什么</h4><h4 id="IMP、SEL、Method的区别和使用场景"><a href="#IMP、SEL、Method的区别和使用场景" class="headerlink" title="IMP、SEL、Method的区别和使用场景"></a>IMP、SEL、Method的区别和使用场景</h4><h4 id="load、initialize方法的区别什么？在继承关系中他们有什么区别"><a href="#load、initialize方法的区别什么？在继承关系中他们有什么区别" class="headerlink" title="load、initialize方法的区别什么？在继承关系中他们有什么区别"></a>load、initialize方法的区别什么？在继承关系中他们有什么区别</h4><pre><code>在 Objective-C 的运行时中，每个类有两个方法都会自动调用。
+
+1、load是根据函数地址直接调用
+2、initialize是通过objc_msgSend调用
+
++load是在一个类被初始装载时调用，先调用类的load, 在调用分类的load</code></pre><p>先编译的类, 优先调用load, 调用子类的load之前, 会先调用父类的load<br>先编译的分类, 优先调用load</p>
+<pre><code>+initialize 是在应用第一次调用该类的类方法或实例方法前调用的，先初始化分类, 后初始化子类</code></pre><p>通过消息机制调用, 当子类没有initialize方法时, 会调用父类的initialize方法, 所以父类的initialize方法会调用多次</p>
+<h4 id="说说消息转发机制的优劣"><a href="#说说消息转发机制的优劣" class="headerlink" title="说说消息转发机制的优劣"></a>说说消息转发机制的优劣</h4><h4 id="Method-Swizzle注意事项"><a href="#Method-Swizzle注意事项" class="headerlink" title="Method Swizzle注意事项"></a>Method Swizzle注意事项</h4><pre><code>应该只在+load中完成
+应该只在 dispatch_once 中完成,由于 swizzling 改变了全局的状，原子操作就是这样一个用于确保代码只会被执行一次的预防措施，就算是在不同的线程中也能确保代码只执行一次</code></pre><h4 id="属性修饰符atomic的内部实现是怎么样的-能保证线程安全吗"><a href="#属性修饰符atomic的内部实现是怎么样的-能保证线程安全吗" class="headerlink" title="属性修饰符atomic的内部实现是怎么样的?能保证线程安全吗"></a>属性修饰符atomic的内部实现是怎么样的?能保证线程安全吗</h4><pre><code>atomic只是对属性的getter/setter方法进行了加锁操作,这种安全仅仅是set/get 的读写安全,并非真正意义上的线程安全,因为线程安全还有读写之外的其他操作(比如:如果当一个线程正在get或set时,又有另一个线程同时在进行release操作,可能会直接crash)</code></pre><h4 id="iOS-中内省的几个方法有哪些？内部实现原理是什么"><a href="#iOS-中内省的几个方法有哪些？内部实现原理是什么" class="headerlink" title="iOS 中内省的几个方法有哪些？内部实现原理是什么"></a>iOS 中内省的几个方法有哪些？内部实现原理是什么</h4><pre><code>判断对象类型:
+-(BOOL) isKindOfClass: 判断是否是这个类或者这个类的子类的实例
+-(BOOL) isMemberOfClass: 判断是否是这个类的实例
+
+
++ (BOOL)isMemberOfClass:(Class)cls {
+    return object_getClass((id)self) == cls;
+}
+- (BOOL)isMemberOfClass:(Class)cls {
+    return [self class] == cls;
+}
+
+判断对象or类是否有这个方法
+-(BOOL) respondsToSelector: 判读实例是否有这样方法
++(BOOL) instancesRespondToSelector: 判断类是否有这个方法
+
+// inst is an instance of cls or a subclass thereof, or nil if none is known.</code></pre><p>// Non-nil inst is faster in some cases. See lookUpImpOrForward() for details.<br>bool class_respondsToSelector_inst(Class cls, SEL sel, id inst)<br>{<br>    IMP imp;</p>
+<pre><code>if (!sel  ||  !cls) return NO;
+
+// Avoids +initialize because it historically did so.
+// We&apos;re not returning a callable IMP anyway.
+imp = lookUpImpOrNil(cls, sel, inst, 
+                     NO/*initialize*/, YES/*cache*/, YES/*resolver*/);
+return bool(imp);</code></pre><p>}</p>
+<pre><code>实例方法：根据传入的sel、类对象、实例对象去找 imp
+
+类方法：根据传入的sel、类对象去找 imp
+
+
+object_getClass:获得的是isa的指向
+self.class:当self是实例对象的时候，返回的是类对象，否则则返回自身。
+类方法class，返回的是self，所以当查找meta class时，需要对类对象调用object_getClass方法</code></pre><h4 id="class、objc-getClass、object-getclass-方法有什么区别"><a href="#class、objc-getClass、object-getclass-方法有什么区别" class="headerlink" title="class、objc_getClass、object_getclass 方法有什么区别?"></a>class、objc_getClass、object_getclass 方法有什么区别?</h4><pre><code>[self class]  self-&gt;实例，返回类对象，否则返回自身
+object_getClass((id)self)获得的是isa的指向</code></pre><h4 id="weak的实现原理？SideTable的结构是什么样的"><a href="#weak的实现原理？SideTable的结构是什么样的" class="headerlink" title="weak的实现原理？SideTable的结构是什么样的"></a>weak的实现原理？SideTable的结构是什么样的</h4><pre><code>initweak</code></pre><h4 id="关联对象的应用？系统如何实现关联对象的"><a href="#关联对象的应用？系统如何实现关联对象的" class="headerlink" title="关联对象的应用？系统如何实现关联对象的"></a>关联对象的应用？系统如何实现关联对象的</h4><pre><code>比如在分类中添加属性，在app进程中会在全局维护一个AssociationsHashMap，可是应用 setAossiatedObject 方法，将要值、关联策略封装到一个ObjcAssociation对象中，然后将其放到一个mObjectAssociationMap中，使用全局唯一的字符作为key，再然后将其放到hashmap数组，由关联对象管理者管理
+如果没有对应的ObjectAssociationMap就重新插入一个，如果已经有了则赋新值，并将原来的释放掉，如果设置为nil则是删掉对应的ObjectAssociationMap。</code></pre><h4 id="关联对象的如何进行内存管理的？关联对象如何实现weak属性"><a href="#关联对象的如何进行内存管理的？关联对象如何实现weak属性" class="headerlink" title="关联对象的如何进行内存管理的？关联对象如何实现weak属性"></a>关联对象的如何进行内存管理的？关联对象如何实现weak属性</h4><pre><code>因为关联对象添加时使用的策略和内存管理语义等效，所以和正常的属性一样，只是在dealloc方法会分别释放两者</code></pre><h4 id="Autoreleasepool的原理？所使用的的数据结构是什么"><a href="#Autoreleasepool的原理？所使用的的数据结构是什么" class="headerlink" title="Autoreleasepool的原理？所使用的的数据结构是什么"></a>Autoreleasepool的原理？所使用的的数据结构是什么</h4><pre><code>app启动时，runloop会创建observer监听runloop 唤醒、休眠、
+Autoreleasepagepush  Autoreleasepagepop  
+&lt;!-- 以栈为节点的双向量表的结构 --&gt;
+双向链表实现的队列里面</code></pre><h4 id="ARC的实现原理？ARC下对retain-amp-release做了哪些优化"><a href="#ARC的实现原理？ARC下对retain-amp-release做了哪些优化" class="headerlink" title="ARC的实现原理？ARC下对retain &amp; release做了哪些优化"></a>ARC的实现原理？ARC下对retain &amp; release做了哪些优化</h4><pre><code>系统自动为我们实现retain &amp; release</code></pre><h4 id="ARC下哪些情况会造成内存泄漏"><a href="#ARC下哪些情况会造成内存泄漏" class="headerlink" title="ARC下哪些情况会造成内存泄漏"></a>ARC下哪些情况会造成内存泄漏</h4><pre><code>循环引用，NSTimer\Block\代理</code></pre><h3 id="Block"><a href="#Block" class="headerlink" title="Block"></a>Block</h3><h4 id="block的内部实现-结构体-；有哪些类型"><a href="#block的内部实现-结构体-；有哪些类型" class="headerlink" title="block的内部实现(结构体)；有哪些类型"></a>block的内部实现(结构体)；有哪些类型</h4><pre><code>struct __main_block_impl_0 {
+    struct __block_impl impl;         
+    struct __main_block_desc_0* Desc; //相关信息描述
+    int multiplier;                   //multiplier变量
+    __main_block_impl_0(void *fp, struct __main_block_desc_0 *desc, int _multiplier, int flags=0)
+     : multiplier(_multiplier) {
+        impl.isa = &amp;_NSConcreteStackBlock;
+        impl.Flags = flags;
+        impl.FuncPtr = fp;
+        Desc = desc;
+    }
+};
+
+
+block本质是一个将函数及其上下文封装起来的对象。
+有三种类型：NSGlobalBlock   NSStackBlock   NSMallocBlock</code></pre><h4 id="一个int变量被-block-修饰与否的区别？block的变量截获"><a href="#一个int变量被-block-修饰与否的区别？block的变量截获" class="headerlink" title="一个int变量被 __block 修饰与否的区别？block的变量截获"></a>一个int变量被 __block 修饰与否的区别？block的变量截获</h4><pre><code>struct __Block_byref_a_0 {
+      void *__isa;
+    __Block_byref_a_0 *__forwarding;
+     int __flags;
+     int __size;
+     int a;
+};  
+__block修饰的变量会变成一个对象，会被block捕获，而局部基本数据类型只会捕获对应的值。
+
+被__block修饰之后，会将其封装成一个对象，其中包含__forwarding指针，对于栈类型的block，
+__forwarding指针指向_block变量自身，对于copy过的堆block，__forwarding指针指向自身，
+而原来栈block中的__forwarding指针指向堆block中的__block变量。这里可以保证当我们将 Block 从栈拷贝到堆中，之后修改的变量都是同一份。
+
+静态 局部基本数据类型会捕获其变量指针
+    局部基本数据类型会其值
+
+全局的不会捕获
+
+对象类型会连其所有权修饰符一同捕获</code></pre><h4 id="block在修改NSMutableArray，需不需要添加-block"><a href="#block在修改NSMutableArray，需不需要添加-block" class="headerlink" title="block在修改NSMutableArray，需不需要添加__block"></a>block在修改NSMutableArray，需不需要添加__block</h4><pre><code>需要，</code></pre><h4 id="怎么进行内存管理的"><a href="#怎么进行内存管理的" class="headerlink" title="怎么进行内存管理的"></a>怎么进行内存管理的</h4><pre><code>NSGlobalBlock   整个app生命周期都会存在
+NSStackBlock    函数体执行完，对应的栈空间会被释放
+NSMallocBlock   当前引用计数为1，且当前无强引用存在，会被释放</code></pre><h4 id="block可以用strong修饰吗？"><a href="#block可以用strong修饰吗？" class="headerlink" title="block可以用strong修饰吗？"></a>block可以用strong修饰吗？</h4><pre><code>可以使用strong修饰符</code></pre><h4 id="Block的属性修饰词为什么用copy，使用-Block-时有哪些要注意的？"><a href="#Block的属性修饰词为什么用copy，使用-Block-时有哪些要注意的？" class="headerlink" title="Block的属性修饰词为什么用copy，使用 Block 时有哪些要注意的？"></a>Block的属性修饰词为什么用copy，使用 Block 时有哪些要注意的？</h4><pre><code>栈block会随着作用域结束而被释放，所以要copy到堆上</code></pre><h4 id="解决循环引用时为什么要用strong、weak修饰"><a href="#解决循环引用时为什么要用strong、weak修饰" class="headerlink" title="解决循环引用时为什么要用strong、weak修饰"></a>解决循环引用时为什么要用<strong>strong、</strong>weak修饰</h4><pre><code>__weak __typeof (self)weakSelf = self;
+
+_observer = [[NSNotificationCenter defaultCenter] addObserverForName:@&quot;Change&quot; object:nil queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification * _Nonnull note) {
+    __strong __typeof(weakSelf)strongSelf = weakSelf;
+    if (strongSelf) {
+        [strongSelf reload];
+    }
+}
+
+1. 在block之前定义对self的弱引用weakSelf,因为是弱引用，所以self被释放时weakSelf会变成nil
+2. 在block中引用该弱引用，考虑到多线程情况，通过强引用strongSelf来引用该弱引用，如果self不为nil，就会retain self，以防在block内部使用过程中self被释放
+3. 在block块中使用该强引用strongSelf，注意对strongSelf进行nil检测，因为多线程在弱引用weakSelf对强引用strongSelf赋值时，弱引用weakSelf可能已经为nil了
+4. 强引用strongSelf在block作用域结束之后，自动释放
+
+在block块中先写一个strongSelf，是为了避免在block的执行过程中，突然出现self被释放的情况。</code></pre><h4 id="block发生copy时机"><a href="#block发生copy时机" class="headerlink" title="block发生copy时机"></a>block发生copy时机</h4><pre><code>不会被自动copy到堆的情况：
+    在ARC模式下，block作为函数的参数传递时不会被copy到堆上。但有两个例外：
+        方法名中含有usingBlock的Cocoa框架方法或GCD的API传递block时。
+
+会被copy到堆上的情况：
+    调用Block的copy方法
+    Block作为函数返回值
+    将Block赋值给__strong修饰符id类型的类或Block类型的成员变量时。
+    方法名中含有usingBlock的Cocoa框架方法或GCD的API传递block时。
+
+注意：多次对同一个Block进行copy操作，只是会增加引用计数</code></pre><h4 id="Block访问对象类型的auto变量时，在ARC和MRC下有什么区别"><a href="#Block访问对象类型的auto变量时，在ARC和MRC下有什么区别" class="headerlink" title="Block访问对象类型的auto变量时，在ARC和MRC下有什么区别"></a>Block访问对象类型的auto变量时，在ARC和MRC下有什么区别</h4><pre><code>auto 变量，其实就是我们平时默认在方法内部定义的变量
+根据 Block 捕获 auto 基本变型的规律，针对对象，仍然适用。
+
+    auto 变量捕获后，Block 中变量的类型和变量原类型一致；
+
+    static 变量捕获后，Block 对应的变量是对应变量的指针类型；
+
+栈上的block ，将不会强引用auto变量</code></pre><h4 id="Block-在-ARC-和-MRC-环境的区别"><a href="#Block-在-ARC-和-MRC-环境的区别" class="headerlink" title="__Block 在 ARC 和 MRC 环境的区别"></a>__Block 在 ARC 和 MRC 环境的区别</h4><pre><code>MRC 环境下，block 截获外部用 __block 修饰的变量，不会增加对象的引用计数
+ARC 环境下，block 截获外部用 __block 修饰的变量，会增加对象的引用计数
+
+所以，在 MRC 环境下，可以通过 __block 来打破循环引用，在 ARC 环境下，则需要用 __weak 来打破循环引用</code></pre><h4 id="block-变量的存储域"><a href="#block-变量的存储域" class="headerlink" title="__block 变量的存储域"></a>__block 变量的存储域</h4><p>Block 从栈复制到堆上，__block 修饰的变量也会从栈复制到堆上；为了结构体 __block 变量无论在栈上还是在堆上，都可以正确的访问变量，我们需要 forwarding 指针；</p>
+<p>在 Block 从栈复制到堆上的时候，原本栈上结构体的 forwarding 指针，会改变指向，直接指向堆上的结构体。这样子就可以保证之后我们都是访问同一个结构体中的变量，这里就是为什么 __block 修饰的变量，在 Block 内部中可以修改的原因了。</p>
+<h4 id="下面代码在-MRC-环境-和-ARC-环境运行的情况"><a href="#下面代码在-MRC-环境-和-ARC-环境运行的情况" class="headerlink" title="下面代码在 MRC 环境 和 ARC 环境运行的情况"></a>下面代码在 MRC 环境 和 ARC 环境运行的情况</h4><ol>
+<li><p>void exampleA() {<br>char a = ‘A’;<br>^{<br> printf(“%cn”, a);<br>}();<br>}</p>
+</li>
+</ol>
+<p>//调用：exampleA();<br>答：首先这个 Block 引用了普通外部变量，所以这个 Block 是在栈上面创建的；Block 是在 exampleA() 函数内创建的，然后创建完马上调用，这个时候 exampleA() 并没有执行完，所以这个栈 Block 是存在的，不会被 pop 出栈。故在 MRC 和 ARC 上面都可以正确执行</p>
+<p>1.<br>void exampleB_addBlockToArray(NSMutableArray *array) {<br>  char b = ‘B’;<br>  [array addObject:^{<br>    printf(“%cn”, b);<br>  }];<br>}</p>
+<p>void exampleB() {<br>  NSMutableArray *array = [NSMutableArray array];<br>  exampleB_addBlockToArray(array);<br>  void (^block)() = [array objectAtIndex:0];<br>  block();<br>}</p>
+<p>//调用：exampleB();</p>
+<h3 id="runLoop"><a href="#runLoop" class="headerlink" title="runLoop"></a>runLoop</h3><h4 id="app如何接收到触摸事件的"><a href="#app如何接收到触摸事件的" class="headerlink" title="app如何接收到触摸事件的"></a>app如何接收到触摸事件的</h4><h4 id="为什么只有主线程的runloop是开启的"><a href="#为什么只有主线程的runloop是开启的" class="headerlink" title="为什么只有主线程的runloop是开启的"></a>为什么只有主线程的runloop是开启的</h4><h4 id="为什么只在主线程刷新UI"><a href="#为什么只在主线程刷新UI" class="headerlink" title="为什么只在主线程刷新UI"></a>为什么只在主线程刷新UI</h4><pre><code>安全+效率：因为UIKit框架不是线程安全的框架，当在多个线程进行UI操作，有可能出现资源抢夺，导致问题。</code></pre><h4 id="PerformSelector和runloop的关系"><a href="#PerformSelector和runloop的关系" class="headerlink" title="PerformSelector和runloop的关系"></a>PerformSelector和runloop的关系</h4><h4 id="如何使线程保活"><a href="#如何使线程保活" class="headerlink" title="如何使线程保活"></a>如何使线程保活</h4><h3 id="KVO"><a href="#KVO" class="headerlink" title="KVO"></a>KVO</h3><h4 id="实现原理"><a href="#实现原理" class="headerlink" title="实现原理"></a>实现原理</h4><h4 id="如何手动关闭kvo"><a href="#如何手动关闭kvo" class="headerlink" title="如何手动关闭kvo"></a>如何手动关闭kvo</h4><h4 id="通过KVC修改属性会触发KVO么"><a href="#通过KVC修改属性会触发KVO么" class="headerlink" title="通过KVC修改属性会触发KVO么"></a>通过KVC修改属性会触发KVO么</h4><pre><code>KVC能触发KVO，KVC在赋值的时候会会进行方法的调用，首先调用（_setKey,setKey方法），如果没有set方法，责直接内部自己调用设置属性（key，_key）,内部就会监听不到值的改变</code></pre><h4 id="哪些情况下使用kvo会崩溃，怎么防护崩溃"><a href="#哪些情况下使用kvo会崩溃，怎么防护崩溃" class="headerlink" title="哪些情况下使用kvo会崩溃，怎么防护崩溃"></a>哪些情况下使用kvo会崩溃，怎么防护崩溃</h4><pre><code>1、observe忘记写监听回调方法 observeValueForKeyPath</code></pre><p>2、add和remove次数不匹配<br>3、监听者和被监听者dealloc之前没有remove（其实也原因2，但是监听者和被监听者的生命周期不同）</p>
+<h4 id="kvo的优缺点"><a href="#kvo的优缺点" class="headerlink" title="kvo的优缺点"></a>kvo的优缺点</h4><pre><code>3.能够提供观察的属性的最新值以及先前值；
+
+3.复杂的“IF”语句要求对象正在观察多个值。这是因为所有的观察代码通过一个方法来指向；</code></pre><h3 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h3><p>同步（在同一个）穿行队列执行的block，会造成死锁，原因是：队列的循环等待造成的死锁</p>
+<h4 id="iOS开发中有多少类型的线程？分别对比"><a href="#iOS开发中有多少类型的线程？分别对比" class="headerlink" title="iOS开发中有多少类型的线程？分别对比"></a>iOS开发中有多少类型的线程？分别对比</h4><table>
+<thead>
+<tr>
+<th>pthread</th>
+<th>NSThread</th>
+<th>GCD</th>
+<th>NSOperation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>C</td>
+<td>OC</td>
+<td>C</td>
+<td>基于GCD</td>
+</tr>
+<tr>
+<td>手动管理线程的生命周期</td>
+<td>手动管理线程的生命周期</td>
+<td>自动管理线程的生命周期</td>
+<td>自动管理线程的生命周期</td>
+</tr>
+<tr>
+<td>使用难度大 跨平台、可移植</td>
+<td>简单易用，可直接操作线程对象</td>
+<td>旨在代替NSNSThread等线程技术，充分利用设备的多核</td>
+<td>使用更加面向对象，可添加依赖</td>
+</tr>
+</tbody></table>
+<h4 id="GCD有哪些队列，默认提供哪些队列"><a href="#GCD有哪些队列，默认提供哪些队列" class="headerlink" title="GCD有哪些队列，默认提供哪些队列"></a>GCD有哪些队列，默认提供哪些队列</h4><h4 id="GCD有哪些方法api"><a href="#GCD有哪些方法api" class="headerlink" title="GCD有哪些方法api"></a>GCD有哪些方法api</h4><h4 id="GCD主线程-amp-主队列的关系"><a href="#GCD主线程-amp-主队列的关系" class="headerlink" title="GCD主线程 &amp; 主队列的关系"></a>GCD主线程 &amp; 主队列的关系</h4><h4 id="如何实现同步，有多少方式就说多少"><a href="#如何实现同步，有多少方式就说多少" class="headerlink" title="如何实现同步，有多少方式就说多少"></a>如何实现同步，有多少方式就说多少</h4><h4 id="dispatch-once实现原理"><a href="#dispatch-once实现原理" class="headerlink" title="dispatch_once实现原理"></a>dispatch_once实现原理</h4><h4 id="什么情况下会死锁"><a href="#什么情况下会死锁" class="headerlink" title="什么情况下会死锁"></a>什么情况下会死锁</h4><h4 id="有哪些类型的线程锁，分别介绍下作用和使用场景"><a href="#有哪些类型的线程锁，分别介绍下作用和使用场景" class="headerlink" title="有哪些类型的线程锁，分别介绍下作用和使用场景"></a>有哪些类型的线程锁，分别介绍下作用和使用场景</h4><h4 id="NSOperationQueue中的maxConcurrentOperationCount默认值"><a href="#NSOperationQueue中的maxConcurrentOperationCount默认值" class="headerlink" title="NSOperationQueue中的maxConcurrentOperationCount默认值"></a>NSOperationQueue中的maxConcurrentOperationCount默认值</h4><h4 id="NSTimer、CADisplayLink、dispatch-source-t-的优劣"><a href="#NSTimer、CADisplayLink、dispatch-source-t-的优劣" class="headerlink" title="NSTimer、CADisplayLink、dispatch_source_t 的优劣"></a>NSTimer、CADisplayLink、dispatch_source_t 的优劣</h4><h3 id="视图-amp-图像相关"><a href="#视图-amp-图像相关" class="headerlink" title="视图&amp;图像相关"></a>视图&amp;图像相关</h3><h4 id="AutoLayout的原理，性能如何"><a href="#AutoLayout的原理，性能如何" class="headerlink" title="AutoLayout的原理，性能如何"></a>AutoLayout的原理，性能如何</h4><h4 id="UIView-amp-CALayer的区别"><a href="#UIView-amp-CALayer的区别" class="headerlink" title="UIView &amp; CALayer的区别"></a>UIView &amp; CALayer的区别</h4><h4 id="事件响应链"><a href="#事件响应链" class="headerlink" title="事件响应链"></a>事件响应链</h4><h4 id="drawrect-amp-layoutsubviews调用时机"><a href="#drawrect-amp-layoutsubviews调用时机" class="headerlink" title="drawrect &amp; layoutsubviews调用时机"></a>drawrect &amp; layoutsubviews调用时机</h4><p>当在操作 UI 时，比如改变了 Frame、更新了 UIView/CALayer 的层次时，或者手动调用了 UIView/CALayer 的 setNeedsLayout/setNeedsDisplay方法后，这个 UIView/CALayer 就被标记为待处理，并被提交到一个全局的容器去。</p>
+<h4 id="UI的刷新原理"><a href="#UI的刷新原理" class="headerlink" title="UI的刷新原理"></a>UI的刷新原理</h4><h4 id="隐式动画-amp-显式动画区别"><a href="#隐式动画-amp-显式动画区别" class="headerlink" title="隐式动画 &amp; 显式动画区别"></a>隐式动画 &amp; 显式动画区别</h4><pre><code>self.colorLayer.backgroundColor = [UIColor blueColor].CGColor;
+self.colorLayer.backgroundColor = [UIColor redColor].CGColor;</code></pre><p>点击按钮，你会发现图层layer的颜色平滑过渡到一个新值。这其实就是所谓的隐式动画。之所以叫隐式是因为我们并没有指定任何动画的类型。我们仅仅改变了一个属性，然后Core Animation来决定如何并且何时去做动画。<br>Core Animation在每个run loop周期中自动开始一次新的事务（run loop是iOS负责收集用户输入，处理定时器或者网络事件并且重新绘制屏幕的东西），即使你不显式的用[CATransaction begin]开始一次事务，任何在一次run loop循环中属性的改变都会被集中起来，然后做一次0.25秒的动画。</p>
+<p>显式动画：指定动画类型</p>
+<h4 id="什么是离屏渲染"><a href="#什么是离屏渲染" class="headerlink" title="什么是离屏渲染"></a>什么是离屏渲染</h4><h4 id="imageName-amp-imageWithContentsOfFile区别"><a href="#imageName-amp-imageWithContentsOfFile区别" class="headerlink" title="imageName &amp;  imageWithContentsOfFile区别"></a>imageName &amp;  imageWithContentsOfFile区别</h4><ol>
+<li>imageWithContentsOfFile<br>1）加载本地目录的图片，并不会缓存，所以占用内存小<br>2）不能加载image.xcassets的图片资源<br>3）相同的图片会被重复加载到内存中</li>
+</ol>
+<p>2.i mageName<br>1）加载到内存中后，会缓存起来，所以占用内存大<br>2）相同的图片不会被重复加载到内存中<br>3）imageName会读取image.xcassets的图片资源，读取不到会返回nil</p>
+<h4 id="多个相同的图片，会重复加载吗"><a href="#多个相同的图片，会重复加载吗" class="headerlink" title="多个相同的图片，会重复加载吗"></a>多个相同的图片，会重复加载吗</h4><h4 id="图片是什么时候解码的，如何优化"><a href="#图片是什么时候解码的，如何优化" class="headerlink" title="图片是什么时候解码的，如何优化"></a>图片是什么时候解码的，如何优化</h4><p>当你用 UIImage 或 CGImageSource 的那几个方法创建图片时，图片数据并不会立刻解码。图片设置到 UIImageView 或者 CALayer.contents 中去，并且 CALayer 被提交到 GPU 前，CGImage 中的数据才会得到解码。这一步是发生在主线程的，并且不可避免。如果想要绕开这个机制，常见的做法是在后台线程先把图片绘制到 CGBitmapContext 中，然后从 Bitmap 直接创建图片。目前常见的网络图片库都自带这个功能。<br>SDWebImage的实现思路就是这样，从网络获取图片后，进行了一次解码操作，再缓存到内存和磁盘，以供显示。</p>
+<h4 id="图片渲染怎么优化"><a href="#图片渲染怎么优化" class="headerlink" title="图片渲染怎么优化"></a>图片渲染怎么优化</h4><p>图片为什么要解码：一般下载或者从磁盘获取的图片是PNG或JPG，这是经过编码压缩后的图片数据，不是位图，要把它们渲染到屏幕前就需要进行解码转成位图数据，而这个解码操作比较耗时。iOS默认是在主线程解码，所以SDWebImage将这个过程放到子线程了。同时因为位图体积很大，所以磁盘缓存不会直接缓存位图数据，而是编码压缩后的PNG或JPG数据。</p>
+<h4 id="如果GPU的刷新率超过了iOS屏幕60Hz刷新率是什么现象，怎么解决"><a href="#如果GPU的刷新率超过了iOS屏幕60Hz刷新率是什么现象，怎么解决" class="headerlink" title="如果GPU的刷新率超过了iOS屏幕60Hz刷新率是什么现象，怎么解决"></a>如果GPU的刷新率超过了iOS屏幕60Hz刷新率是什么现象，怎么解决</h4><h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><h4 id="如何做启动优化，如何监控"><a href="#如何做启动优化，如何监控" class="headerlink" title="如何做启动优化，如何监控"></a>如何做启动优化，如何监控</h4><p>App启动的三个阶段：<br>main()函数执行前；<br>main()函数执行后；<br>首屏渲染完成后。<br>main()函数执行前<br>加载可执行文件<br>加载动态链接库<br>Objc运行时初始处理，相关类的注册、category注册、selector唯一性检查等<br>初始化，执行+load()方法、<strong>attribute</strong>((constructor))修饰的函数调用、创建c++静态全局变量<br>此阶段优化方案：</p>
+<p>减少动态库加载 （可以将多个动态库合并，非系统动态库最多6个合为一个）<br>减少类、分类、方法（selector）的数量<br>用+initialize方法和dispatch_once取代所有的ObjC的+load<br>减少c++全局变量的数量<br>main()函数执行后<br>此阶段是指main()函数开始执行 -&gt; didFinishLaunchingWithOptions里首屏渲染方法执行完成<br>注意首页业务代码是在首屏渲染完成前执行</p>
+<p>首屏相关基础库初始化<br>首屏相关业务数据读取和处理<br>首屏渲染的大量计算<br>此阶段优化方案</p>
+<p>各种初始化工作，不要都放到此阶段里面，会导致首屏渲染滞后。启动必要初始化，首屏渲染必要初始化，可以放在此阶段。其他的初始化放到对应功能使用之前。<br>首屏渲染完成后<br>此阶段是指 didFinishLaunchingWithOptions 方法作用域内首屏渲染之后的所有方法执行完成</p>
+<p>非首屏其他业务服务模块的初始化<br>监听的注册<br>配置文件的读取等<br>此阶段首页信息已经显示完成<br>此阶段优化方案</p>
+<p>主要优化主线程耗时方法，滞后执行或者异步执行，因为此阶段已经显示首页，主要优化用户的交互。<br>App启动速度的监控<br>通过在工程的scheme中添加环境变量DYLD_PRINT_STATISTICS，设置值为1，App启动加载时Xcode的控制台就会有pre-main各个阶段的详细耗时输出。</p>
+<p>另外两种方法：</p>
+<p>第一种方法：定时抓取主线程上的方法调用堆栈，计算一段时间里各个方法的耗时<br>Time Profiler 就是采用这种方式。</p>
+<p>注意点</p>
+<p>定时间隔长则会漏掉某些耗时短的方法<br>定时间隔短，抓取堆栈的方法本身会频繁调用，影响整体耗时<br>一般设置0.01秒，对整体耗时影响小，但是检测的很多方法耗时就不准确了。不过整体耗时数据比较重要，单个耗时不准可以接受。<br>如果设置0.002秒基本所有方法都可以检测，整体耗时就不准了。</p>
+<p>第二种方法：对 objc_msgSend 方法进行hook来掌握所有方法的耗时</p>
+<h4 id="如何做卡顿优化，如何监控"><a href="#如何做卡顿优化，如何监控" class="headerlink" title="如何做卡顿优化，如何监控"></a>如何做卡顿优化，如何监控</h4><p>检测方案一：基于Runloop<br>主线程绝大部分计算或者绘制任务都是以Runloop为单位发生。单次Runloop如果时长超过16ms，就会导致UI体验的卡顿。那如何检测单次Runloop的耗时呢？</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)setupRunloopObserver&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line">    <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">        <span class="built_in">CFRunLoopRef</span> runloop = <span class="built_in">CFRunLoopGetCurrent</span>(); </span><br><span class="line">        <span class="built_in">CFRunLoopObserverRef</span> enterObserver;</span><br><span class="line">        enterObserver = <span class="built_in">CFRunLoopObserverCreate</span>(<span class="built_in">CFAllocatorGetDefault</span>(),</span><br><span class="line">                                               kCFRunLoopEntry | kCFRunLoopExit,</span><br><span class="line">                                               <span class="literal">true</span>,</span><br><span class="line">                                               <span class="number">-0x7FFFFFFF</span>,</span><br><span class="line">                                               BBRunloopObserverCallBack, <span class="literal">NULL</span>);</span><br><span class="line">        <span class="built_in">CFRunLoopAddObserver</span>(runloop, enterObserver, kCFRunLoopCommonModes);</span><br><span class="line">        <span class="built_in">CFRelease</span>(enterObserver);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">static</span> <span class="keyword">void</span> BBRunloopObserverCallBack(<span class="built_in">CFRunLoopObserverRef</span> observer, <span class="built_in">CFRunLoopActivity</span> activity, <span class="keyword">void</span> *info) &#123;</span><br><span class="line">    <span class="keyword">switch</span> (activity) &#123;</span><br><span class="line">        <span class="keyword">case</span> kCFRunLoopEntry: &#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"enter runloop..."</span>);</span><br><span class="line">        &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">case</span> kCFRunLoopExit: &#123;</span><br><span class="line">            <span class="built_in">NSLog</span>(<span class="string">@"leave runloop..."</span>);</span><br><span class="line">        &#125;</span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        <span class="keyword">default</span>: <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>检测方案三：CADisplayLink监控<br>CADisplayLink监控的思路是每个屏幕刷新周期，派发标记位设置任务到主线程中，如果多次超出16.7ms的刷新阙值，即可看作是发生了卡顿。</p>
+<h4 id="如何做耗电优化，如何监控"><a href="#如何做耗电优化，如何监控" class="headerlink" title="如何做耗电优化，如何监控"></a>如何做耗电优化，如何监控</h4><p>3、使用Instrument的Energy Log<br>第一步：打开手机设置，点击“开发者”<br>第二步：点击Logging<br>第三步：勾选Energy，并点击startRecording<br>第四步：运行需要测试的APP（确保手机消耗的是手机自身的电池），运行3-5分钟，在进入手机设置点击stopRecording<br>第五步：使用Xcode，把手机和Xcode相连，并打开instruments中的Energy Log，点击工具栏中import Logged Data from Device<br>第六步：得到了电池损耗日志<br>Energy Usage Level的值（0–20），值越大表示越耗电<br>CPU Activity表示CPU各种活动</p>
+<p>1、合理使用NSDateFormatter和NSCalendar这种高开销对象<br>2、不要频繁的刷新页面，能刷新1行cell最好只刷新一行，尽量不要使用reloadData。<br>3、选择正确的集合<br>NSArray，使用index来查找很快（插入和删除很慢）<br>字典，使用键来查找很快<br>NSSets是无序的，用键查找很快，插入/删除很快<br>4、少用运算获得圆角，不论view.maskToBounds还是layer.clipToBounds都会有很大的资源开销，必须要用圆角的话，不如把图片本身做成圆角。<br>5、懒加载，不要一次性创建所有的subview，而是需要时才创建<br>9、尽量少用透明透明或半透明，会产生额外的运算<br>10、使用ARC减少内存食物，dealloc需要重写并对属性置为nil<br>11、避免庞大的xib，storyBoard,尽量使用纯代码开发<br>CPU层面<br>1、Timer的时间间隔不宜太短，满足需求即可<br>2、线程适量，不宜过多，不要阻塞主线程<br>3、优化算法，减少循环次数<br>4、定位和蓝牙按需取用，定位之后要关闭或降低定位频率</p>
+<h4 id="如何做网络优化，如何监控"><a href="#如何做网络优化，如何监控" class="headerlink" title="如何做网络优化，如何监控"></a>如何做网络优化，如何监控</h4><p>苹果官方提供了一个叫 <a href="http://xiazai.jb51.net/201608/yuanma/Reachability(jb51.net).rar" target="_blank" rel="noopener">Reachability</a> 的示例程序，便于开发者检测网络状态<br>Reachability 中定义了3种网络状态:</p>
+<p>typedefenum: NSInteger {</p>
+<p>NotReachable = 0,//无连接</p>
+<p>ReachableViaWiFi,//使用WiFi网络</p>
+<p>ReachableViaWWAN//使用3G/GPRS网络</p>
+<p>} NetworkStatus;</p>
+<h3 id="典型源码的学习"><a href="#典型源码的学习" class="headerlink" title="典型源码的学习"></a>典型源码的学习</h3><p>AFN<br>SDWebImage</p>
+<h3 id="架构设计"><a href="#架构设计" class="headerlink" title="架构设计"></a>架构设计</h3><h4 id="手动埋点、自动化埋点、可视化埋点"><a href="#手动埋点、自动化埋点、可视化埋点" class="headerlink" title="手动埋点、自动化埋点、可视化埋点"></a>手动埋点、自动化埋点、可视化埋点</h4><h4 id="MVC、MVP、MVVM设计模式"><a href="#MVC、MVP、MVVM设计模式" class="headerlink" title="MVC、MVP、MVVM设计模式"></a>MVC、MVP、MVVM设计模式</h4><h4 id="常见的设计模式"><a href="#常见的设计模式" class="headerlink" title="常见的设计模式"></a>常见的设计模式</h4><h4 id="单例的弊端"><a href="#单例的弊端" class="headerlink" title="单例的弊端"></a>单例的弊端</h4><h4 id="常见的路由方案，以及优缺点对比"><a href="#常见的路由方案，以及优缺点对比" class="headerlink" title="常见的路由方案，以及优缺点对比"></a>常见的路由方案，以及优缺点对比</h4><h4 id="如果保证项目的稳定性"><a href="#如果保证项目的稳定性" class="headerlink" title="如果保证项目的稳定性"></a>如果保证项目的稳定性</h4><h4 id="设计一个图片缓存框架-LRU"><a href="#设计一个图片缓存框架-LRU" class="headerlink" title="设计一个图片缓存框架(LRU)"></a>设计一个图片缓存框架(LRU)</h4><div class="image-box">
+                <img src="图片缓存框架.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+<p>多级缓存的机制</p>
+<div class="image-box">
+                <img src="图片缓存读取图片流程.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+<p>以图片URL的单向Hash值作为key<br>内存设计：使用内存快，注意问题：存储的size 淘汰策略（因为空间有限）<br>    50个 x 10 kb<br>    20个 x 100kb<br>    。。。</p>
+<pre><code>队列的方式实现
+
+淘汰策略：队列先进先出方式、LRU算法(如30分钟内是否使用过，最近最久未使用，定时器耗性能，采用：每次读写时检查一次等来提高检查触发频率)</code></pre><p>磁盘设计：读取效率低<br>    存储方式<br>    大小限制<br>    淘汰策略（如某以图片存储已超过7天）</p>
+<p>网络设计：<br>    图片请求的最大并发量<br>    请求超时策略（超过两次就不再请求）<br>    请求优先级</p>
+<p>图片解码：<br>    解码策略：<br>    解码时机：磁盘读取后、网络请求后  –&gt; 内存</p>
+<h4 id="设计一个阅读时长框架"><a href="#设计一个阅读时长框架" class="headerlink" title="设计一个阅读时长框架"></a>设计一个阅读时长框架</h4><div class="image-box">
+                <img src="阅读时长.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+<p>内存（满足个数）-&gt;磁盘  </p>
+<p>上传时机：<br>立即上传<br>延时上传：（满足个数）  、前后台切换<br>定时上传：</p>
+<h4 id="如何设计一个git-diff"><a href="#如何设计一个git-diff" class="headerlink" title="如何设计一个git diff"></a>如何设计一个git diff</h4><h4 id="设计一个线程池？画出你的架构图"><a href="#设计一个线程池？画出你的架构图" class="headerlink" title="设计一个线程池？画出你的架构图"></a>设计一个线程池？画出你的架构图</h4><h4 id="你的app架构是什么，有什么优缺点、为什么这么做、怎么改进"><a href="#你的app架构是什么，有什么优缺点、为什么这么做、怎么改进" class="headerlink" title="你的app架构是什么，有什么优缺点、为什么这么做、怎么改进"></a>你的app架构是什么，有什么优缺点、为什么这么做、怎么改进</h4><h4 id="复杂页面"><a href="#复杂页面" class="headerlink" title="复杂页面"></a>复杂页面</h4><div class="image-box">
+                <img src="复杂页面.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+<div class="image-box">
+                <img src="view&vc.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+<div class="image-box">
+                <img src="viewmodel.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+<div class="image-box">
+                <img src="engine&model.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+<div class="image-box">
+                <img src="数据流向.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+<div class="image-box">
+                <img src="UI数据.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+
+
+<h3 id="开发证书"><a href="#开发证书" class="headerlink" title="开发证书"></a>开发证书</h3><h2 id="MySQL"><a href="#MySQL" class="headerlink" title="MySQL"></a>MySQL</h2><h3 id="MySQL数据库性能优化的八种方式"><a href="#MySQL数据库性能优化的八种方式" class="headerlink" title="MySQL数据库性能优化的八种方式"></a>MySQL数据库性能优化的八种方式</h3><ol>
+<li><p>选取最适用的字段属性<br> 将表中字段的宽度设得尽可能小 CHAR(255)-&gt;CHAR(6)<br> 应该尽量把字段设置为NOTNULL，这样在将来执行查询的时候，数据库不用去比较NULL值。</p>
+</li>
+<li><p>使用连接（JOIN）来代替子查询(Sub-Queries)<br> 连接（JOIN）..之所以更有效率一些，是因为MySQL不需要在内存中创建临时表来完成这个逻辑上的需要两个步骤的查询工作</p>
+</li>
+<li><p>使用联合(UNION)来代替手动创建的临时表<br> union和union all的主要区别是union all是把结果集直接合并在一起，而<br> union 是将union all后的结果镜像一次distinct，去除重复的记录后的结果</p>
+</li>
+<li><p>事务<br> 可以保持数据库中数据的一致性和完整性。事物以BEGIN关键字开始，COMMIT关键字结束。在这之间的一条SQL操作失败，那么，ROLLBACK命令就可以把数据库恢复到BEGIN开始之前的状态。</p>
+<p> BEGIN;<br> INSERT INTO salesinfo SET CustomerID=14;<br> UPDATE inventory SET Quantity=11 WHERE item=’book’;<br> COMMIT;</p>
+</li>
+<li><p>锁定表<br> 尽管事务是维护数据库完整性的一个非常好的方法，但却因为它的独占性，有时会影响数据库的性能，尤其是在很大的应用系统中。由于在事务执行的过程中，数据库将会被锁定，因此其它的用户请求只能暂时等待直到该事务结束</p>
+</li>
+<li><p>使用外键</p>
+</li>
+<li><p>使用索引<br>对经常更新的表就避免对其进行过多的索引，对经常用于查询的字段应该创建索引，<br>索引我们分为四类来讲 单列索引(普通索引，唯一索引，主键索引)、组合索引、全文索引、空间索引</p>
+</li>
+</ol>
+<p>单列索引：一个索引只包含单个列，但一个表中可以有多个单列索引<br>普通索引：MySQL中基本索引类型，没有什么限制，允许在定义索引的列中插入重复值和空值，纯粹为了查询数据更快一点。<br>唯一索引：索引列中的值必须是唯一的，但是允许为空值，<br>主键索引：是一种特殊的唯一索引，不允许有空值。</p>
+<h2 id="Redis"><a href="#Redis" class="headerlink" title="Redis"></a>Redis</h2><p>key-value存储系统<br>Redis是一个开源的使用ANSI C语言编写、遵守BSD协议、支持网络、可基于内存亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。</p>
+<p>它通常被称为数据结构服务器，因为值（value）可以是 字符串(String), 哈希(Hash), 列表(list), 集合(sets) 和 有序集合(sorted sets)等类型。</p>
+<p>Redis支持数据的持久化，可以将内存中的数据保存在磁盘中，重启的时候可以再次加载进行使用。<br>Redis不仅仅支持简单的key-value类型的数据，同时还提供list，set，zset，hash等数据结构的存储。<br>性能极高 – Redis能读的速度是110000次/s,写的速度是81000次/s 。<br>原子 – Redis的所有操作都是原子性的，意思就是要么成功执行要么失败完全不执行。单个操作是原子性的。多个操作也支持事务，即原子性，通过MULTI和EXEC指令包起来。<br>丰富的特性 – Redis还支持 publish/subscribe, 通知, key 过期等等特性。</p>
+<h2 id="Tomcat"><a href="#Tomcat" class="headerlink" title="Tomcat"></a>Tomcat</h2><p>Tomcat 服务器是一个开源的轻量级Web应用服务器，在中小型系统和并发量小的场合下被普遍使用，是开发和调试Servlet、JSP 程序的首选。</p>
+<p>Tomcat主要组件：服务器Server，服务Service，连接器Connector、容器Container。连接器Connector和容器Container是Tomcat的核心。</p>
+<p>一个Container容器和一个或多个Connector组合在一起，加上其他一些支持的组件共同组成一个Service服务，有了Service服务便可以对外提供能力了，但是Service服务的生存需要一个环境，这个环境便是Server，Server组件为Service服务的正常使用提供了生存环境，Server组件可以同时管理一个或多个Service服务。</p>
+<ol>
+<li><p>Connecter<br>一个Connecter将在某个指定的端口上侦听客户请求，接收浏览器的发过来的 tcp 连接请求，创建一个 Request 和 Response 对象分别用于和请求端交换数据，然后会产生一个线程来处理这个请求并把产生的 Request 和 Response 对象传给处理Engine(Container中的一部分)，从Engine出获得响应并返回客户。</p>
+</li>
+<li><p>Container<br> Engine</p>
+<pre><code>Host
+    Context
+        Wrapper
+            Servlet</code></pre></li>
+</ol>
+<p>其实Servlet本身在Tomcat中是“非常被动”的一个角色，处理的事情也很简单。网络请求与响应，不是他的主要职责，它其实更偏向于业务代码。所谓的Request和Response是Tomcat传给它，用来处理请求和响应的工具，但它本身不处理这些。</p>
+<div class="image-box">
+                <img src="servlet.png" alt="servlet" title="" class="">
+                <p class="image-box-title">servlet</p>
+            </div>
+<div class="image-box">
+                <img src="Spring.png" alt="Spring" title="" class="">
+                <p class="image-box-title">Spring</p>
+            </div>
+<div class="image-box">
+                <img src="Strust2.png" alt="Strust2" title="" class="">
+                <p class="image-box-title">Strust2</p>
+            </div>
+
+<h2 id="Struts2-基于MVC的轻量级的Web应用框架"><a href="#Struts2-基于MVC的轻量级的Web应用框架" class="headerlink" title="Struts2:基于MVC的轻量级的Web应用框架"></a>Struts2:基于MVC的轻量级的Web应用框架</h2><p>允许POJO（Plain Old Java Objects）对象作为Action.<br>Action的execute 方法不再与Servlet API耦合，更易测试<br>支持更多视图技术（JSP、FreeMarker、Velocity）<br>基于Spring AOP思想的拦截器机制，更易扩展<br>整合Ajax支持</p>
+<div class="image-box">
+                <img src="Struts2工作原理.jpg" alt="Struts2工作原理" title="" class="">
+                <p class="image-box-title">Struts2工作原理</p>
+            </div>
+<ol>
+<li><p>客户端初始化一个指向Servlet容器（例如Tomcat）的请求</p>
+</li>
+<li><p>这个请求经过一系列的过滤器（Filter）（这些过滤器中有一个叫做ActionContextCleanUp的可选过滤器，这个过滤器对于Struts2和其他框架的集成很有帮助，例如：SiteMesh Plugin） </p>
+</li>
+<li><p>接着FilterDispatcher被调用，FilterDispatcher询问ActionMapper来决定这个请是否需要调用某个Action </p>
+</li>
+</ol>
+<p>FilterDispatcher是控制器的核心，就是mvc中c控制层的核心。下面粗略的分析下我理解的FilterDispatcher工作流程和原理：FilterDispatcher进行初始化并启用核心doFilter</p>
+<ol start="4">
+<li><p>如果ActionMapper决定需要调用某个Action，FilterDispatcher把请求的处理交给ActionProxy </p>
+</li>
+<li><p>ActionProxy通过ConfigurationManager询问框架的配置文件，找到需要调用的Action类 ,这里，我们一般是从struts.xml配置中读取。</p>
+</li>
+<li><p>ActionProxy创建一个ActionInvocation的实例。</p>
+</li>
+<li><p>ActionInvocation实例使用命名模式来调用，在调用Action的过程前后，涉及到相关拦截器（Intercepter）的调用。<br>在struts2中自带了很多拦截器，在struts2-core-2.1.6.jar这个包下的struts-default.xml中我们可以发现对于sturts2自带的拦截器，使用起来就相对比较方便了，我们只需要在struts.xml的action标签中加入<interceptor-ref name=" logger " />并且struts.xml扩展struts-default，就可以使用，如果是要自定义拦截器，首先需要写一个拦截器的类：</p>
+</li>
+</ol>
+<ol start="8">
+<li>一旦Action执行完毕，ActionInvocation负责根据struts.xml中的配置找到对应的返回结果。返回结果通常是（但不总是，也可能是另外的一个Action链）一个需要被表示的JSP或者FreeMarker的模版。在表示的过程中可以使用Struts2 框架中继承的标签。在这个过程中需要涉及到ActionMapper，在上述过程中所有的对象（Action，Results，Interceptors，等）都是通过ObjectFactory来创建的</li>
+</ol>
+<h2 id="SpringMVC-是在Spring框架内置的MVC的实现"><a href="#SpringMVC-是在Spring框架内置的MVC的实现" class="headerlink" title="SpringMVC:是在Spring框架内置的MVC的实现"></a>SpringMVC:是在Spring框架内置的MVC的实现</h2><p>1、 用户向服务端发送一次请求，这个请求会先到前端控制器DispatcherServlet(也叫中央控制器)。<br>2、DispatcherServlet接收到请求后会调用HandlerMapping处理器映射器。由此得知，该请求该由哪个Controller来处理（并未调用Controller，只是得知）<br>3、DispatcherServlet调用HandlerAdapter处理器适配器，告诉处理器适配器应该要去执行哪个Controller<br>4、HandlerAdapter处理器适配器去执行Controller并得到ModelAndView(数据和视图)，并层层返回给DispatcherServlet<br>5、DispatcherServlet将ModelAndView交给ViewReslover视图解析器解析，然后返回真正的视图。<br>6、DispatcherServlet将模型数据填充到视图中<br>7、DispatcherServlet将结果响应给用户</p>
+<p>可以简单的把SpringMVC理解为是Spring的一个模块（类似AOP，IOC这样的模块），网络上经常会说SpringMVC和Spring无缝集成，其实SpringMVC就是Spring的一个子模块，所以根本不需要同spring进行整合。</p>
+<p>SSM框架：SpringMVC + Spring + MyBatis<br>SSH框架：SpringMVC + Spring + hibernate</p>
+<p>支持注解配置</p>
+<p>Struts2也是非常优秀的MVC构架，优点非常多比如良好的结构，拦截器的思想，丰富的功能。但这里想说的是缺点，Struts2由于采用了值栈、OGNL表达式、struts2标签库等，会导致应用的性能下降，应避免使用这些功能。而Struts2的多层拦截器、多实例action性能都很好。可以参考我写的一篇关于Spring MVC与Struts2与Servlet比较的文章《Struts2、SpringMVC、Servlet(Jsp)性能对比 测试》</p>
+<p>Spring3 MVC的优点：</p>
+<p>1、Spring3 MVC使用简单，学习成本低。学习难度小于Struts2，Struts2用不上的多余功能太多。呵呵，当然这不是决定因素。</p>
+<p>2、Spring3 MVC很容易就可以写出性能优秀的程序，Struts2要处处小心才可以写出性能优秀的程序（指MVC部分）</p>
+<p>3、Spring3 MVC的灵活是你无法想像的，Spring框架的扩展性有口皆碑，Spring3 MVC当然也不会落后，不会因使用了MVC框架而感到有任何的限制。</p>
+<h3 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h3><p>依赖注入（DI）<br>这里将依赖关系部分转化为两个类之间的关联。例如，类 A 依赖于类 B。现在，让我们看一看第二部分，注入。所有这一切都意味着类 B 将通过 IoC 被注入到类 A 中。</p>
+<p>面向方面的程序设计（AOP）：</p>
+<h2 id="MyBatis-持久化框架"><a href="#MyBatis-持久化框架" class="headerlink" title="MyBatis 持久化框架"></a>MyBatis 持久化框架</h2><div class="image-box">
+                <img src="MyBatis.png" alt="MyBatis" title="" class="">
+                <p class="image-box-title">MyBatis</p>
+            </div>
+
+
+
+<h2 id="SpringCloud微服务架构"><a href="#SpringCloud微服务架构" class="headerlink" title="SpringCloud微服务架构"></a>SpringCloud微服务架构</h2>
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Dongdong Guo</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/02/多线程的锁机制/">多线程的锁机制</a>
+            
+            
+            <a class="next" rel="next" href="/2020/03/30/RunLoop/">RunLoop</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Dongdong Guo | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
