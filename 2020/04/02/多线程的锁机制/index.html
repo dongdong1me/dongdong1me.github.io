@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Dongdong Guo">
+
+
+
+
+
+<title>多线程的锁机制 | EvaSite</title>
+
+
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo" ><a style="font-weight: bold;"  href="/">Eva&#39;s Site</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default" type="hidden">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Eva&#39;s Site</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">多线程的锁机制</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Dongdong Guo</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">April 2, 2020&nbsp;&nbsp;1:25:30</a>
+                        </span>
+                    
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>在使用多线程的时候多个线程可能会访问同一块资源，这样就很容易引发数据错乱和数据安全等问题。解决资源争用，最直接的想法是引入锁，对并发读写的数据进行保护，保证每次只有一个线程访问这一块资源。</p>
+<p>锁是最常用的同步工具：一块公共资源在同一个时间只能允许被一个线程访问，比如一个线程A进入加锁资源之后，由于已经加锁，另一个线程B就无法访问，只有等待前一个线程A执行完后解锁，B线程才能访问加锁资源。</p>
+<h2 id="iOS中都有哪些锁？"><a href="#iOS中都有哪些锁？" class="headerlink" title="iOS中都有哪些锁？"></a>iOS中都有哪些锁？</h2><h3 id="互斥锁"><a href="#互斥锁" class="headerlink" title="互斥锁"></a>互斥锁</h3><p>如果共享数据已经有其他线程加锁了，线程会进入休眠状态等待锁。一旦被访问的资源被解锁， 则等待资源的线程会被唤醒<br>特点：锁被占用，当前挂起等待，执行其他</p>
+<h4 id="synchronized"><a href="#synchronized" class="headerlink" title="@synchronized"></a>@synchronized</h4><h4 id="NSLock-对象锁"><a href="#NSLock-对象锁" class="headerlink" title="NSLock 对象锁"></a>NSLock 对象锁</h4><h4 id="NSRecursiveLock递归锁"><a href="#NSRecursiveLock递归锁" class="headerlink" title="NSRecursiveLock递归锁"></a>NSRecursiveLock递归锁</h4><h4 id="NSConditionLock-条件锁"><a href="#NSConditionLock-条件锁" class="headerlink" title="NSConditionLock 条件锁"></a>NSConditionLock 条件锁</h4><h4 id="dispatch-semaphore-信号量实现加锁（GCD）"><a href="#dispatch-semaphore-信号量实现加锁（GCD）" class="headerlink" title="dispatch_semaphore 信号量实现加锁（GCD）"></a>dispatch_semaphore 信号量实现加锁（GCD）</h4><p>信号量(semaphore)，有时被称为信号灯，是在多线程环境下使用的一种设施，是可以用来保证两个或多个关键代码段不被并发调用。在进入一个关键代码段之前，线程必须获取一个信号量；一旦该关键代码段完成了，那么该线程必须释放信号量。其它想进入该关键代码段的线程必须等待直到第一个线程释放信号量。<br>实现原理：不是使用忙等，而是阻塞线程并睡眠，主动让出时间片，需要进行上下文切换。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建锁  value必须 &gt;=0，若传入为 0 则阻塞线程并等待timeout，时间到后会执行其后的语句</span></span><br><span class="line">dispatch_semaphore_create(<span class="keyword">long</span> value);</span><br><span class="line"><span class="comment">//可以理解为 lock,会使得 signal 值 -1</span></span><br><span class="line">dispatch_semaphore_wait(dispatch_semaphore_t dsema, dispatch_time_t timeout);</span><br><span class="line"><span class="comment">//可以理解为 unlock,会使得 signal 值 +1</span></span><br><span class="line">dispatch_semaphore_signal(dispatch_semaphore_t dsema);</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h3><p>如果共享数据已经有其他线程加锁了，线程会以死循环的方式等待锁，一旦被访问的资源被解锁， 则等待资源的线程会立即执行<br>特点：轮询获取，不会挂起，占用cpu</p>
+<ol>
+<li>自旋锁的性能高于互斥锁，因为响应速度快</li>
+<li>自旋锁虽然会一直自旋等待获取锁，但不会一直占用CPU，超过了操作系统分配的时间片会被强制挂起</li>
+<li>自旋锁如果不能保证所有线程都是同一优先级，则可能造成死锁。</li>
+</ol>
+<h4 id="OSSpinLock-自旋锁"><a href="#OSSpinLock-自旋锁" class="headerlink" title="OSSpinLock 自旋锁"></a>OSSpinLock 自旋锁</h4><p>实现机制:忙等</p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>多核处理器情况下： 如果预计线程等待锁的时间比较短，短到比线程两次切换上下文的时间还要少的情况下，自旋锁是更好的选择。<br>如果时间比较长，则互斥锁是比较好的选择。 单核处理器情况下： 不建议使用自旋锁</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Dongdong Guo</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/04/02/UI/">UI</a>
+            
+            
+            <a class="next" rel="next" href="/2020/04/01/面试题集/">题集</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Dongdong Guo | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

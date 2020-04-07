@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Dongdong Guo">
+
+
+
+
+
+<title>Runtime | EvaSite</title>
+
+
+
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo" ><a style="font-weight: bold;"  href="/">Eva&#39;s Site</a></div>
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default" type="hidden">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">Eva&#39;s Site</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">About</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Runtime</h1>
+            
+                <div class="post-meta">
+                    
+                        Author: <a itemprop="author" rel="author" href="/">Dongdong Guo</a>
+                    
+
+                    
+                        <span class="post-time">
+                        Date: <a href="#">March 22, 2020&nbsp;&nbsp;16:33:48</a>
+                        </span>
+                    
+                    
+                        <span class="post-category">
+                    Category:
+                            
+                                <a href="/categories/Objective-C/">Objective-C</a>
+                            
+                        </span>
+                    
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>本文所使用的源码为 objc4-756.2</p>
+<p>Objc是一门动态语言，使用“消息结构”（messaging structure）而非“函数调用”（function calling），前者代码的执行由运行时环境决定，后者由编译器决定。Runtime基本是用 C 和汇编写的，提供Objc的运行时系统，执行编译后的代码。<a href="https://opensource.apple.com/source/objc4/" target="_blank" rel="noopener">这里</a>可下载苹果维护的开源代码</p>
+<!-- 基础数据结构 模块 -->
+
+<h2 id="基础数据结构"><a href="#基础数据结构" class="headerlink" title="基础数据结构"></a>基础数据结构</h2><div class="image-box">
+                <img src="runtime基础结构.png" alt="基础数据结构关系图" title="" class="">
+                <p class="image-box-title">基础数据结构关系图</p>
+            </div>
+
+<h3 id="id"><a href="#id" class="headerlink" title="id"></a>id</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_object *<span class="keyword">id</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> objc_object &#123;</span><br><span class="line">private:</span><br><span class="line">    isa_t isa;</span><br><span class="line"></span><br><span class="line">public:</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>id</code>是一个指向实例的<strong>指针</strong>，也就是某个类的实例对象。结构体中包含一个 <code>isa</code> 指针，定义了实例所属的类型，通常称为 “is a” 指针。</p>
+<h3 id="isa"><a href="#isa" class="headerlink" title="isa"></a>isa</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">union</span> isa_t &#123;</span><br><span class="line">    isa_t() &#123; &#125;</span><br><span class="line">    isa_t(uintptr_t value) : bits(value) &#123; &#125;</span><br><span class="line"></span><br><span class="line">    Class cls;</span><br><span class="line">    uintptr_t bits;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined(ISA_BITFIELD)</span></span><br><span class="line">    <span class="keyword">struct</span> &#123;</span><br><span class="line">        ISA_BITFIELD;  <span class="comment">// defined in isa.h</span></span><br><span class="line">    &#125;;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SUPPORT_NONPOINTER_ISA</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">if</span> __arm64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MASK        0x0000000ffffffff8ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MAGIC_MASK  0x000003f000000001ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MAGIC_VALUE 0x000001a000000001ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_BITFIELD                                                      \</span></span><br><span class="line">      uintptr_t nonpointer        : <span class="number">1</span>;                                       \</span><br><span class="line">      uintptr_t has_assoc         : <span class="number">1</span>;                                       \</span><br><span class="line">      uintptr_t has_cxx_dtor      : <span class="number">1</span>;                                       \</span><br><span class="line">      uintptr_t shiftcls          : <span class="number">33</span>; <span class="comment">/*MACH_VM_MAX_ADDRESS 0x1000000000*/</span> \</span><br><span class="line">      uintptr_t magic             : <span class="number">6</span>;                                       \</span><br><span class="line">      uintptr_t weakly_referenced : <span class="number">1</span>;                                       \</span><br><span class="line">      uintptr_t deallocating      : <span class="number">1</span>;                                       \</span><br><span class="line">      uintptr_t has_sidetable_rc  : <span class="number">1</span>;                                       \</span><br><span class="line">      uintptr_t extra_rc          : <span class="number">19</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> RC_ONE   (1ULL&lt;&lt;45)</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> RC_HALF  (1ULL&lt;&lt;18)</span></span><br><span class="line"></span><br><span class="line"><span class="meta"># <span class="meta-keyword">elif</span> __x86_64__</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MASK        0x00007ffffffffff8ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MAGIC_MASK  0x001f800000000001ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_MAGIC_VALUE 0x001d800000000001ULL</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> ISA_BITFIELD                                                        \</span></span><br><span class="line">      uintptr_t nonpointer        : <span class="number">1</span>;                                         \</span><br><span class="line">      uintptr_t has_assoc         : <span class="number">1</span>;                                         \</span><br><span class="line">      uintptr_t has_cxx_dtor      : <span class="number">1</span>;                                         \</span><br><span class="line">      uintptr_t shiftcls          : <span class="number">44</span>; <span class="comment">/*MACH_VM_MAX_ADDRESS 0x7fffffe00000*/</span> \</span><br><span class="line">      uintptr_t magic             : <span class="number">6</span>;                                         \</span><br><span class="line">      uintptr_t weakly_referenced : <span class="number">1</span>;                                         \</span><br><span class="line">      uintptr_t deallocating      : <span class="number">1</span>;                                         \</span><br><span class="line">      uintptr_t has_sidetable_rc  : <span class="number">1</span>;                                         \</span><br><span class="line">      uintptr_t extra_rc          : <span class="number">8</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> RC_ONE   (1ULL&lt;&lt;56)</span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">define</span> RC_HALF  (1ULL&lt;&lt;7)</span></span><br><span class="line"></span><br><span class="line"><span class="meta"># <span class="meta-keyword">else</span></span></span><br><span class="line"><span class="meta">#   <span class="meta-keyword">error</span> unknown architecture for packed isa</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="comment">// SUPPORT_NONPOINTER_ISA</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p><code>SUPPORT_NONPOINTER_ISA</code> 用于标记是否支持优化的 <code>isa</code> 指针，其字面含义意思是 <code>isa</code> 的内容不再是类的指针了，而是包含了更多信息</p>
+<table>
+<thead>
+<tr>
+<th>变量名</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>indexed</code></td>
+<td>0 表示普通的 <code>isa</code> 指针，1 表示使用优化，存储引用计数</td>
+</tr>
+<tr>
+<td><code>has_assoc</code></td>
+<td>表示该对象是否包含 <code>associated object</code></td>
+</tr>
+<tr>
+<td><code>has_cxx_dtor</code></td>
+<td>表示该对象是否有 <code>C++</code> 或 <code>ARC</code> 的析构函数</td>
+</tr>
+<tr>
+<td><code>shiftcls</code></td>
+<td>类的指针</td>
+</tr>
+<tr>
+<td><code>magic</code></td>
+<td>判断对象是否初始化完成</td>
+</tr>
+<tr>
+<td><code>weakly_referenced</code></td>
+<td>表示该对象是否有过 <code>weak</code> 对象</td>
+</tr>
+<tr>
+<td><code>deallocating</code></td>
+<td>表示该对象是否正在析构</td>
+</tr>
+<tr>
+<td><code>has_sidetable_rc</code></td>
+<td>判断是否需要用 <code>sidetable</code> 去处理引用计数，（ <code>extra_rc</code> 的大小会影响到这个变量），若需要则表示该对象的引用计数值过大无法存储在 <code>isa</code> 指针</td>
+</tr>
+<tr>
+<td><code>extra_rc</code></td>
+<td>存储该对象的引用计数值减一后的结果</td>
+</tr>
+</tbody></table>
+<h3 id="Class"><a href="#Class" class="headerlink" title="Class"></a>Class</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_class *Class;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> objc_class : objc_object &#123;</span><br><span class="line">    <span class="comment">// Class ISA;</span></span><br><span class="line">    Class superclass;</span><br><span class="line">    cache_t cache;             <span class="comment">// formerly cache pointer and vtable</span></span><br><span class="line">    class_data_bits_t bits;    <span class="comment">// class_rw_t * plus custom rr/alloc flags</span></span><br><span class="line"></span><br><span class="line">    class_rw_t *data() &#123; </span><br><span class="line">        <span class="keyword">return</span> bits.data();</span><br><span class="line">    &#125;</span><br><span class="line">    ...                                                     </span><br><span class="line">&#125;                                                          OBJC2_UNAVAILABLE;</span><br></pre></td></tr></table></figure>
+<p>objc_class 结构体继承自 objc_object ，说明 Class 本身也是Objc对象，称为类对象，而类对象所属的类型被称为做 元类（metaclass），用来描述类对象本身所具备的元数据。“类方法”定义于此，这些方法可以理解成类对象的实例方法。</p>
+<ul>
+<li><strong>类与元类</strong></li>
+</ul>
+<div class="image-box">
+                <img src="class-diagram.jpg" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+
+<p>当发出一个类似 <code>[OC runtime]</code> 的消息时，事实上是把这个消息发给了一个类对象 (Class Object) ，Objc会去它的元类里面去查找能够响应消息的方法，找到就会执行其<code>IMP</code>，如果没有找到，则会当前元类的 <code>superClass</code> 所指向的元类中方法列表中寻找直至到根元类的方法列表。如果过程都没有找到对应的类方法实现，就会到<code>NSObject</code> 根类寻找，因为根元类的 <code>superClass</code> 指向 <code>NSObject</code> 根类。如果NSObject的类方法列表中没有找到对应的方法，则继续会查找NSObject的实例方法列表，那么如果NSObject中（分类）有对应的同名的实例方法，则会产生实际的调用，系统会执行同名的实例方法。</p>
+<ul>
+<li><strong>Tips</strong> : <code>isa</code> 指针不总是指向实例对象所属的类，不要用 <code>isa</code> 来判断一个类的继承关系，而是应该用 <code>class</code> 方法来判断实例的类。因为 <code>KVO</code> 的实现机理就是将被观察对象的 <code>isa</code> 指针指向一个中间类而不是真实的类，这是一种叫做 <code>isa-swizzling</code> 的技术，后面会介绍。</li>
+</ul>
+<h4 id="cache-t"><a href="#cache-t" class="headerlink" title="cache_t"></a>cache_t</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> cache_t &#123;</span><br><span class="line">    <span class="keyword">struct</span> bucket_t *_buckets;</span><br><span class="line">    mask_t _mask;</span><br><span class="line">    mask_t _occupied;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每当实例对象接收到一个消息时，它不会直接在isa指向的类的方法列表中遍历查找能够响应消息的方法，而是优先在 <code>cache</code> 中（哈希）查找。<code>Runtime</code> 系统会把被调用的方法存到 <code>cache</code>中（理论上讲一个方法如果被调用，那么它有可能今后还会被调用），下次查找的时候效率更高，实际这体现来局部性原理的应用。</p>
+<p><code>cache</code>是一个可增量扩展的哈希表结构，buckets 存储 <code>IMP</code>，bucket_t 存储 指针 与 <code>IMP</code> 的键值对。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> bucket_t &#123;</span><br><span class="line">private:</span><br><span class="line">    cache_key_t _key;</span><br><span class="line">    IMP _imp;</span><br><span class="line"></span><br><span class="line">public:</span><br><span class="line">    <span class="keyword">inline</span> cache_key_t key() <span class="keyword">const</span> &#123; <span class="keyword">return</span> _key; &#125;</span><br><span class="line">    <span class="keyword">inline</span> IMP imp() <span class="keyword">const</span> &#123; <span class="keyword">return</span> (IMP)_imp; &#125;</span><br><span class="line">    <span class="keyword">inline</span> <span class="keyword">void</span> setKey(cache_key_t newKey) &#123; _key = newKey; &#125;</span><br><span class="line">    <span class="keyword">inline</span> <span class="keyword">void</span> setImp(IMP newImp) &#123; _imp = newImp; &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> set(cache_key_t newKey, IMP newImp);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="class-data-bits-t"><a href="#class-data-bits-t" class="headerlink" title="class_data_bits_t"></a>class_data_bits_t</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> class_data_bits_t &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Values are the FAST_ flags above.</span></span><br><span class="line">	uintptr_t bits;</span><br><span class="line">	class_rw_t* data() &#123;</span><br><span class="line">	   <span class="keyword">return</span> (class_rw_t *)(bits &amp; FAST_DATA_MASK);</span><br><span class="line">	&#125;</span><br><span class="line">    ...     </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>回看 <code>objc_class</code> 的结构体，<code>objc_class</code> 的 <code>data</code> 方法直接将 <code>class_data_bits_t</code> 的 <code>data</code> 方法返回，最终是返回 <code>class_rw_t</code>。而<code>class_data_bits_t</code> 里又包一个 bits，这个指针跟不同的 FAST_ 前缀的 flag 掩码做按位与操作，就可以获取不同的数据。此处待学。</p>
+<h4 id="class-rw-t"><a href="#class-rw-t" class="headerlink" title="class_rw_t"></a>class_rw_t</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> class_rw_t &#123;</span><br><span class="line">    <span class="comment">// Be warned that Symbolication knows the layout of this structure.</span></span><br><span class="line">    uint32_t flags;</span><br><span class="line">    uint32_t version;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> class_ro_t *ro;</span><br><span class="line"></span><br><span class="line">    method_array_t methods;</span><br><span class="line">    property_array_t properties;</span><br><span class="line">    protocol_array_t protocols;</span><br><span class="line"></span><br><span class="line">    Class firstSubclass;</span><br><span class="line">    Class nextSiblingClass;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span> *demangledName;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> SUPPORT_INDEXED_ISA</span></span><br><span class="line">    uint32_t index;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>class_rw_t</code> 的内容是可以在运行时被动态修改的，运行时对类的拓展大都是存储在这里。<code>method_array_t</code>, <code>property_array_t</code>, <code>protocol_array_t</code> 均继承自 <code>list_array_tt<Element, List></code>, 这是一个可以不断扩张的结构。</p>
+<h4 id="class-ro-t"><a href="#class-ro-t" class="headerlink" title="class_ro_t"></a>class_ro_t</h4><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> class_ro_t &#123;</span><br><span class="line">    uint32_t flags;</span><br><span class="line">    uint32_t instanceStart;</span><br><span class="line">    uint32_t instanceSize;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> __LP64__</span></span><br><span class="line">    uint32_t reserved;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> uint8_t * ivarLayout;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> * name;</span><br><span class="line">    method_list_t * baseMethodList;</span><br><span class="line">    protocol_list_t * baseProtocols;</span><br><span class="line">    <span class="keyword">const</span> ivar_list_t * ivars;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">const</span> uint8_t * weakIvarLayout;</span><br><span class="line">    property_list_t *baseProperties;</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><code>class_rw_t</code> 结构体包含 <code>class_ro_t</code> 的指针，<code>class_ro_t</code> 存储的大多是类在编译时就已经确定的信息，不可扩展，从名字也能看出二者的区别。<code>method_list_t</code>, <code>ivar_list_t</code>, <code>property_list_t</code> 结构体均继承自 <code>entsize_list_tt<Element, List, FlagMask></code>。</p>
+<h3 id="Category"><a href="#Category" class="headerlink" title="Category"></a>Category</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> category_t &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line">    classref_t cls;</span><br><span class="line">    <span class="keyword">struct</span> method_list_t *instanceMethods;</span><br><span class="line">    <span class="keyword">struct</span> method_list_t *classMethods;</span><br><span class="line">    <span class="keyword">struct</span> protocol_list_t *protocols;</span><br><span class="line">    <span class="keyword">struct</span> property_list_t *instanceProperties;</span><br><span class="line">    <span class="comment">// Fields below this point are not always present on disk.</span></span><br><span class="line">    <span class="keyword">struct</span> property_list_t *_classProperties;</span><br><span class="line"></span><br><span class="line">    method_list_t *methodsForMeta(<span class="keyword">bool</span> isMeta) &#123;</span><br><span class="line">        <span class="keyword">if</span> (isMeta) <span class="keyword">return</span> classMethods;</span><br><span class="line">        <span class="keyword">else</span> <span class="keyword">return</span> instanceMethods;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    property_list_t *propertiesForMeta(<span class="keyword">bool</span> isMeta, <span class="keyword">struct</span> header_info *hi);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以在分类中添加实例方法、类方法以及协议。App启动时，系统会调用 <code>attachCategories</code> 函数向 <code>class_rw_t</code> 中的 <code>method_array_t</code>, <code>property_array_t</code>, <code>protocol_array_t</code> 数组中分别添加 <code>method_list_t</code>, <code>property_list_t</code>, <code>protocol_list_t</code> 指针。但是我们不能直接添加属性，它们无法把实现属性所需的实例变量合成出来。不过有时只读属性还是可以在分类中使用的：获取方法不访问数据，同时属性也不需要由实例变量来实现。实际上我们可以关利用<strong>关联对象</strong>的技术为分类添加属性，会在应用中详细介绍</p>
+<h3 id="SEL"><a href="#SEL" class="headerlink" title="SEL"></a>SEL</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> objc_selector *SEL;</span><br></pre></td></tr></table></figure>
+<p>是 <code>selector</code> 在 Objc 中的表示类型。其实它就是个映射到方法的 <code>C</code> 字符串，可以用 Objc 编译器命令 <code>@selector()</code> 或者 Runtime 系统的 <code>sel_registerName</code> 函数来获得一个<code>SEL</code>类型的方法选择器</p>
+<h3 id="IMP"><a href="#IMP" class="headerlink" title="IMP"></a>IMP</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// A pointer to the function of a method implementation.  指向一个方法实现的指针</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">id</span> (*IMP)(<span class="keyword">id</span>, SEL, ...);</span><br></pre></td></tr></table></figure>
+<p>就是指向最终实现程序的内存地址的指针。</p>
+<h3 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> method_t *Method;</span><br><span class="line"><span class="keyword">struct</span> method_t &#123;</span><br><span class="line">    SEL name;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *types;</span><br><span class="line">    IMP imp;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">struct</span> SortBySELAddress :</span><br><span class="line">        public std::binary_function&lt;<span class="keyword">const</span> method_t&amp;,</span><br><span class="line">                                    <span class="keyword">const</span> method_t&amp;, <span class="keyword">bool</span>&gt;</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">bool</span> operator() (<span class="keyword">const</span> method_t&amp; lhs,</span><br><span class="line">                         <span class="keyword">const</span> method_t&amp; rhs)</span><br><span class="line">        &#123; <span class="keyword">return</span> lhs.name &lt; rhs.name; &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>在Runtime中，<code>Method</code>通过<code>selector</code>和<code>IMP</code>两个属性，实现了快速查询方法及实现，相对提高了性能，又保持了灵活性</p>
+<h3 id="Ivar"><a href="#Ivar" class="headerlink" title="Ivar"></a>Ivar</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> ivar_t *Ivar;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> ivar_t &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> __x86_64__</span></span><br><span class="line">    <span class="comment">// *offset was originally 64-bit on some x86_64 platforms.</span></span><br><span class="line">    <span class="comment">// We read and write only 32 bits of it.</span></span><br><span class="line">    <span class="comment">// Some metadata provides all 64 bits. This is harmless for unsigned </span></span><br><span class="line">    <span class="comment">// little-endian values.</span></span><br><span class="line">    <span class="comment">// Some code uses all 64 bits. class_addIvar() over-allocates the </span></span><br><span class="line">    <span class="comment">// offset for their benefit.</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    int32_t *offset;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *type;</span><br><span class="line">    <span class="comment">// alignment is sometimes -1; use alignment() instead</span></span><br><span class="line">    uint32_t alignment_raw;</span><br><span class="line">    uint32_t size;</span><br><span class="line"></span><br><span class="line">    uint32_t alignment() <span class="keyword">const</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (alignment_raw == ~(uint32_t)<span class="number">0</span>) <span class="keyword">return</span> <span class="number">1</span>U &lt;&lt; WORD_SHIFT;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span> &lt;&lt; alignment_raw;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>Ivar是<strong>对象</strong>中实际储存信息的变量，结构为 ivar_t 。offset 代表了这个变量在内存中相对所属对象内存空间起始地址的偏移量,偏移量大小根据类型来定。可以通过class_copyIvarList获取对象中的属性：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ivar *class_copyIvarList(Class cls, <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount)</span><br></pre></td></tr></table></figure>
+
+<p>该方法返回的是一个 <code>Ivar</code>指针，指向属性列表数组的指针</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取属性名称</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *ivar_getName(Ivar ivar)</span><br><span class="line"><span class="comment">//获取属性@encode（真实）类型</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *ivar_getTypeEncoding(Ivar ivar)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="objc-property-t"><a href="#objc-property-t" class="headerlink" title="objc_property_t"></a>objc_property_t</h3><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> property_t *objc_property_t;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> property_t &#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *attributes;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>我们用 <code>@property</code> 标记<strong>类</strong>中的属性，结构为<code>property_t</code>。可以通过 <code>class_copyPropertyList</code> 方法来获取类中的属性：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">objc_property_t *class_copyPropertyList(Class cls, <span class="keyword">unsigned</span> <span class="keyword">int</span> *outCount)</span><br></pre></td></tr></table></figure>
+<p>该方法返回的是一个 <code>objc_property_t</code>指针，指向属性列表数组的指针</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//获取属性名称</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *property_getName(objc_property_t property)</span><br><span class="line"><span class="comment">//获取属性@encode（真实）类型</span></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">char</span> *property_getAttributes(objc_property_t property)</span><br></pre></td></tr></table></figure>
+
+<!-- class_copyPropertyList返回的仅仅是对象类的属性(@property申明的属性)，而class_copyIvarList返回类的所有属性和变量(包括在@interface大括号中声明的变量) -->
+
+<!-- property == 属性，ivar == 成员变量 -->
+
+
+
+
+
+
+
+<!-- 消息模块 -->
+<h2 id="消息传递"><a href="#消息传递" class="headerlink" title="消息传递"></a>消息传递</h2><div class="image-box">
+                <img src="runtime消息传递.png" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+
+<p>在Objc中，当我们执行如下代码时：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">id</span> returnValue = [someObject messageName:parameter];</span><br></pre></td></tr></table></figure>
+<p>编译器会将其转化为一条标准的<code>C</code>语言函数调用，所调用的函数乃是消息传递机制中的核心函数 <code>objc_msgSend</code> ，其原型如下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> objc_msgSend(<span class="keyword">id</span> <span class="keyword">self</span>, SEL cmd, ...)</span><br></pre></td></tr></table></figure>
+<ol>
+<li>第一个参数 代表消息接受者 <code>receiver</code></li>
+<li>第二个参数 代表选择子（<code>SEL</code>代表选择子的类型） </li>
+<li>选择子与参数合起来称为<code><strong>消息</strong></code>（message）</li>
+</ol>
+<ul>
+<li>编译器关键字 <code>super</code><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Specifies the superclass of an instance. </span></span><br><span class="line"><span class="keyword">struct</span> objc_super &#123;</span><br><span class="line">    <span class="comment">/// Specifies an instance of a class.</span></span><br><span class="line">    __<span class="keyword">unsafe_unretained</span> _Nonnull <span class="keyword">id</span> receiver;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// Specifies the particular superclass of the instance to message. </span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> !defined(__cplusplus)  &amp;&amp;  !__OBJC2__</span></span><br><span class="line">    <span class="comment">/* For compatibility with old objc-runtime.h header */</span></span><br><span class="line">    __<span class="keyword">unsafe_unretained</span> _Nonnull Class <span class="keyword">class</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">    __<span class="keyword">unsafe_unretained</span> _Nonnull Class super_class;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    <span class="comment">/* super_class is the first class to search */</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<p><code>objc_super</code> 结构体中，第一个属性是 <code>receiver</code>，这个类似 <code>objc_msgSend</code> 的第一个参数 <code>receiver</code> ，接受消息是 <code>self</code> 即实例对象，所以当我们<code>[super class]</code>时，等同于调用<code>[self class]</code></p>
+<ul>
+<li><strong>消息发送过程：</strong></li>
+</ul>
+<ol>
+<li>首先类的 <code>cache</code> ，若找到则执行它的实现 <code>IMP</code>；如果 <code>cache</code> 找不到就会查找 Class 的方法分发表</li>
+<li>如果分发表找不到，就查找超类的 <code>cache</code> 及 方法分发表，直至 <code>NSObject</code> 类为止<div class="image-box">
+                <img src="runtime逐级父类查找.png" alt="父类逐级查找" title="" class="">
+                <p class="image-box-title">父类逐级查找</p>
+            </div></li>
+<li>如果找不到会开始进入动态方法解析</li>
+<li>如果找不到会找有没有备选对象</li>
+<li>如此刻还是找不到，就会进行消息转发</li>
+</ol>
+<!-- 动态方法解析模块 -->
+<h2 id="动态方法解析"><a href="#动态方法解析" class="headerlink" title="动态方法解析"></a>动态方法解析</h2><p>因为Objc是一门动态语言，所以我们可以动态的提供一个方法的实现。例如我们可以用<code>@dynamic</code>关键字在类的实现文件中修饰一个属性，编译器就不会再默认为我们自动合成存取方法，而需要我们动态提供。</p>
+<p>对象在收到无法解读的消息后，首先将调用其所属类的下列方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="built_in">BOOL</span>)resolveInstanceMethod:(SEL)selector</span><br></pre></td></tr></table></figure>
+
+<p>我们可以通过分别重载<code>resolveInstanceMethod:</code>和<code>resolveClassMethod:</code>方法分别添加实例方法实现和类方法实现。因为当 Runtime 系统在<code>Cache</code>和方法分发表中（包括超类）找不到要执行的方法时，Runtime会调用<code>resolveInstanceMethod:</code>或<code>resolveClassMethod:</code>来给程序员一次动态添加方法实现的机会。我们需要用<code>class_addMethod</code>函数完成向特定类添加特定方法实现的操作：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="comment">// Do any additional setup after loading the view, typically from a nib.</span></span><br><span class="line"></span><br><span class="line">    [<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(dynamicMethod:)];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="built_in">BOOL</span>)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">    <span class="keyword">if</span> (sel == <span class="keyword">@selector</span>(dynamicMethod:)) &#123;<span class="comment">//如果是执行foo函数，就动态解析，指定新的IMP</span></span><br><span class="line">        class_addMethod([<span class="keyword">self</span> <span class="keyword">class</span>], sel, (IMP)dynamicMethodIMP, <span class="string">"v@:"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">YES</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">super</span> resolveInstanceMethod:sel];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> dynamicMethodIMP(<span class="keyword">id</span> obj, SEL _cmd) &#123;</span><br><span class="line">    <span class="comment">// implementation ....</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的例子为dynamicMethod方法添加了实现内容，也就是dynamicMethodIMP方法中的代码。其中 <code>v@:</code> 表示返回值和参数，这个符号涉及 <a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html" target="_blank" rel="noopener">Type Encoding</a></p>
+<!-- 备援接受者模块 -->
+<h2 id="备援接受者"><a href="#备援接受者" class="headerlink" title="备援接受者"></a>备援接受者</h2><p>在消息转发机制执行前，Runtime 系统会再给我们一次偷梁换柱的机会，即通过重载<code>- (id)forwardingTargetForSelector:(SEL)aSelector</code>方法替换消息的接受者为其他对象：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">id</span>)forwardingTargetForSelector:(SEL)aSelector</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(aSelector == <span class="keyword">@selector</span>(mysteriousMethod:))&#123;</span><br><span class="line">        <span class="keyword">return</span> alternateObject;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">super</span> forwardingTargetForSelector:aSelector];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果想替换类方法的接受者，需要覆写 <code>+ (id)forwardingTargetForSelector:(SEL)aSelector</code> 方法，并返回类对象：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="keyword">id</span>)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">	<span class="keyword">if</span>(aSelector == <span class="keyword">@selector</span>(xxx)) &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="built_in">NSClassFromString</span>(<span class="string">@"Class name"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> [<span class="keyword">super</span> forwardingTargetForSelector:aSelector];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<!-- 消息转发模块 -->
+<h2 id="消息转发"><a href="#消息转发" class="headerlink" title="消息转发"></a>消息转发</h2><p>如果在上一步还不能处理未知消息，那么接下来将进入消息转发阶段，完整的消息转发过程如下：</p>
+<div class="image-box">
+                <img src="Objc_msg.jpg" alt="" title="" class="">
+                <p class="image-box-title"></p>
+            </div>
+
+<p>首先创建 <code>NSInvocation</code> 对象，把尚未处理的那条消息有关的全部细节都封于其中。包括选择子、目标（target）及参数。在触发 <code>NSInvocation</code> 对象时，“消息派发系统”（message-dispatch system）将会亲自出马，把消息指派给目标对象。此步骤会调用以下方法：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)forwardInvocation:(<span class="built_in">NSInvocation</span> *)anInvocation</span><br></pre></td></tr></table></figure>
+
+<p>实现此方法时，若发现某调用操作不应由本类处理，则需要调用超类的同名方法，直至 <code>NSObject</code> 。如果还未找到接受者，那么该方法会调用 <code>doesNotRecognizeSelector:</code> 以抛出异常表明选择子最终未能得到处理。</p>
+<p>不过我们可以通过重写 <code>forwardInvocation: </code> 方法来避免抛出这种异常：替换消息的接受者为其他对象。但是此时我们需要<code>NSInvocation</code> 对象，在<code>forwardInvocation:</code>消息发送前，Runtime系统会向对象发送<code>methodSignatureForSelector:</code>消息，并取到返回的方法签名用于生成<code>NSInvocation</code>对象。所以我们在重写forwardInvocation:的同时也要重写methodSignatureForSelector:方法，否则会抛异常。</p>
+<p>完整转发的例子:</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"ViewController.h"</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">"objc/runtime.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">Person</span>: <span class="title">NSObject</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">Person</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)dynamicMethod &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">ViewController</span> ()</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">ViewController</span></span></span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)viewDidLoad &#123;</span><br><span class="line">    [<span class="keyword">super</span> viewDidLoad];</span><br><span class="line">    <span class="comment">// Do any additional setup after loading the view, typically from a nib.</span></span><br><span class="line">    </span><br><span class="line">    [<span class="keyword">self</span> performSelector:<span class="keyword">@selector</span>(dynamicMethod)];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">+ (<span class="built_in">BOOL</span>)resolveInstanceMethod:(SEL)sel &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">YES</span>;<span class="comment">//返回YES，进入下一步转发</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">id</span>)forwardingTargetForSelector:(SEL)aSelector &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span>;<span class="comment">//返回nil，进入下一步转发</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="built_in">NSMethodSignature</span> *)methodSignatureForSelector:(SEL)aSelector &#123;</span><br><span class="line">    <span class="keyword">if</span> ([<span class="built_in">NSStringFromSelector</span>(aSelector) isEqualToString:<span class="string">@"dynamicMethod"</span>]) &#123;</span><br><span class="line">        <span class="keyword">return</span> [<span class="built_in">NSMethodSignature</span> signatureWithObjCTypes:<span class="string">"v@:"</span>];<span class="comment">//签名，进入forwardInvocation</span></span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> [<span class="keyword">super</span> methodSignatureForSelector:aSelector];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)forwardInvocation:(<span class="built_in">NSInvocation</span> *)anInvocation &#123;</span><br><span class="line">    SEL sel = anInvocation.selector;</span><br><span class="line"></span><br><span class="line">    Person *p = [Person new];</span><br><span class="line">    <span class="keyword">if</span>([p respondsToSelector:sel]) &#123;</span><br><span class="line">        [anInvocation invokeWithTarget:p];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        [<span class="keyword">self</span> doesNotRecognizeSelector:sel];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<!-- 应用模块 -->
+<h2 id="应用"><a href="#应用" class="headerlink" title="应用"></a>应用</h2><h3 id="关联对象"><a href="#关联对象" class="headerlink" title="关联对象"></a>关联对象</h3><p>当我们需要动态的给某个对象关联一些其他对象时，比如：我们无法在分类中添加 <code>@property</code>，因为系统并不会自动帮我们生成实例变量以及存取方法，但是关联对象（Associated Object）可以帮我们实现。这些关联对象是通过 “键” 来区分的，可以指明 ”存储策略“（storage policy），用以维护对应的 “内存管理语义”。</p>
+<table>
+<thead>
+<tr>
+<th><strong>关联类型</strong></th>
+<th><strong>等效的@property</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OBJC_ASSOCIATION_ASSIGN</td>
+<td>assign</td>
+</tr>
+<tr>
+<td>OBJC_ASSOCIATION_RETAIN_NONATOMIC</td>
+<td>nonatomic  ， retain</td>
+</tr>
+<tr>
+<td>OBJC_ASSOCIATION_COPY_NONATOMIC</td>
+<td>nonatiomic  ， copy</td>
+</tr>
+<tr>
+<td>OBJC_ASSOCIATION_RETAIN</td>
+<td>retain</td>
+</tr>
+<tr>
+<td>OBJC_ASSOCIATION_COPY</td>
+<td>copy</td>
+</tr>
+</tbody></table>
+<p>关联对象Runtime提供了下面几个接口：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">* id object：被关联的对象</span></span><br><span class="line"><span class="comment">* const void *key：关联的key，要求唯一</span></span><br><span class="line"><span class="comment">* id value：关联的对象</span></span><br><span class="line"><span class="comment">* objc_AssociationPolicy policy：内存管理的策略</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="comment">//关联对象</span></span><br><span class="line"><span class="keyword">void</span> objc_setAssociatedObject(<span class="keyword">id</span> object, <span class="keyword">const</span> <span class="keyword">void</span> *key, <span class="keyword">id</span> value, objc_AssociationPolicy policy)</span><br><span class="line"><span class="comment">//获取关联的对象</span></span><br><span class="line"><span class="keyword">id</span> objc_getAssociatedObject(<span class="keyword">id</span> object, <span class="keyword">const</span> <span class="keyword">void</span> *key)</span><br><span class="line"><span class="comment">//移除关联的对象</span></span><br><span class="line"><span class="keyword">void</span> objc_removeAssociatedObjects(<span class="keyword">id</span> object)</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> objc_setAssociatedObject(<span class="keyword">id</span> object, <span class="keyword">const</span> <span class="keyword">void</span> *key, <span class="keyword">id</span> value, objc_AssociationPolicy policy)&#123;</span><br><span class="line">  AssociationsManager manager;</span><br><span class="line">  AssociationsHashMap &amp;associations(manager.associations));</span><br><span class="line">  disguised_ptr_t disguised_object = DISGUISE(object);</span><br><span class="line">  <span class="keyword">if</span>(value)&#123;</span><br><span class="line">    <span class="comment">// 存在新值</span></span><br><span class="line">    AssociationsHashMap::iterator i = associations.find(disguised_object);</span><br><span class="line">    <span class="keyword">if</span>(i != associations.end())&#123;</span><br><span class="line">        <span class="comment">// 该key对应的ObjectAssociationMap已经存在</span></span><br><span class="line">        ObjectAssociationMap *refs = i-&gt;second;</span><br><span class="line">        ObjectAssociationMap::iterator j = refs-&gt;find(key);</span><br><span class="line">        <span class="keyword">if</span>(j != refs-&gt;end())&#123;  </span><br><span class="line">           <span class="comment">//存在旧值，需要进行释放</span></span><br><span class="line">           old_association = j-&gt;second;</span><br><span class="line">            j-&gt;second = ObjcAssociation(policy, new_value);</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">           <span class="comment">// 直接赋值</span></span><br><span class="line">            (*refs)[key] = ObjcAssociation(policy, new_value);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="comment">//  创建key对应的ObjectAssociationMap</span></span><br><span class="line">        ObjectAssociationMap *refs = new ObjectAssociationMap ;</span><br><span class="line">        associations[disguised_object] = refs;</span><br><span class="line">        (*refs)[key] = ObjcAssociation(policy, new_value);</span><br><span class="line">        object-&gt;setHasAssociatedObjects();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      <span class="comment">// 将key对应的ObjectAssociationMap从AssociationsHashMap移除</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">   ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里出现了几个新的数据结构，AssociationsManager、AssociationsHashMap和ObjectAssociationMap。<br>(1)AssociationsManager是AssociationsHashMap的单例。<br>(2)AssociationsHashMap是unordered_map&lt;disguised_ptr_t, ObjectAssociationMap *&gt;的哈希表。<br>(3)ObjectAssociationMap是map&lt;void *, ObjcAssociation&gt;的容器。<br>(4)ObjcAssociation定义如下，保存着值和存取策略：</p>
+<p>class ObjcAssociation{<br>    uintptr_t policy;<br>    id _value;<br>};<br>这样的话就比较明确了，通过以下方式来保存着一个ObjcAssociation对象。<br>AssociationsManager-&gt;AssociationsHashMap[DISGUISE(object)]-&gt;ObjectAssociationMap [key]-&gt;ObjcAssociation。<br>而objc_setAssociatedObject的逻辑也比较简单，如果没有对应的ObjectAssociationMap就重新插入一个，如果已经有了则赋新值，并将原来的释放掉，如果设置为nil则是删掉对应的ObjectAssociationMap。</p>
+<p>在关联对象中，如果想要两个键匹配同一个值，则二者必须是完全相同的指针。因此在设置关联对象的时候，都是通过使用<strong>静态全局变量</strong>作为键。比如在分类中动态添加属性：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#import <span class="meta-string">"ViewController.h"</span></span></span><br><span class="line"><span class="meta">#import <span class="meta-string">"objc/runtime.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@interface</span> <span class="title">UIView</span> (<span class="title">DefaultColor</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@property</span> (<span class="keyword">nonatomic</span>, <span class="keyword">strong</span>) <span class="built_in">UIColor</span> *defaultColor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">@implementation</span> <span class="title">UIView</span> (<span class="title">DefaultColor</span>)</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">@dynamic</span> defaultColor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">char</span> kDefaultColorKey;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)setDefaultColor:(<span class="built_in">UIColor</span> *)defaultColor &#123;</span><br><span class="line">    objc_setAssociatedObject(<span class="keyword">self</span>, &amp;kDefaultColorKey, defaultColor, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">id</span>)defaultColor &#123;</span><br><span class="line">    <span class="keyword">return</span> objc_getAssociatedObject(<span class="keyword">self</span>, &amp;kDefaultColorKey);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">@end</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Isa-Swizzling-KVO"><a href="#Isa-Swizzling-KVO" class="headerlink" title="Isa Swizzling (KVO)"></a>Isa Swizzling (KVO)</h3><p>根据名字可以看出来，实质是交换 <code>isa</code> 指针，<code>KVO</code> ( Key-value observing ) 就用到了 <a href="https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueObserving/Articles/KVOImplementation.html" target="_blank" rel="noopener">Isa Swizzling</a> 技术。</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="keyword">void</span>)addObserver:(<span class="built_in">NSObject</span> *)observer forKeyPath:(<span class="built_in">NSString</span> *)keyPath options:(<span class="built_in">NSKeyValueObservingOptions</span>)options context:(<span class="keyword">nullable</span> <span class="keyword">void</span> *)context;</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)removeObserver:(<span class="built_in">NSObject</span> *)observer forKeyPath:(<span class="built_in">NSString</span> *)keyPath context:(<span class="keyword">nullable</span> <span class="keyword">void</span> *)context <span class="built_in">NS_AVAILABLE</span>(<span class="number">10</span>_7, <span class="number">5</span>_0);</span><br><span class="line"></span><br><span class="line">- (<span class="keyword">void</span>)removeObserver:(<span class="built_in">NSObject</span> *)observer forKeyPath:(<span class="built_in">NSString</span> *)keyPath;</span><br></pre></td></tr></table></figure>
+
+<p>当我们调用 <code>addObserver:</code> 方法之后，系统会创建一个继承自当前类的新类 <code>NSKVONotifying_A</code> ，并把当前实例的 <code>isa</code> 指针指向 <code>NSKVONotifying_A</code> ，同时在 <code>NSKVONotifying_A</code> 里面重写<code>setter</code>、<code>dealloc</code>、<code>_isKVOA</code>等相关方法</p>
+<ul>
+<li><strong>Tips</strong> : self.property 和 _property 两种访问方式的区别<table>
+<thead>
+<tr>
+<th><strong>self.property</strong></th>
+<th><strong>_property</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>通过属性访问，即通过 <code>setter</code> 和 <code>getter</code> 方法，所以需要经过方法派发（method dispatch）</td>
+<td>直接访问，绕开存取方法，不经过方法派发，所以访问速度相对来说快一些</td>
+</tr>
+<tr>
+<td></td>
+<td>因为绕开存取方法，所以也就饶过了相关属性定义的内存管理语义。exc：<code>ARC</code>下访问 <code>copy</code> 的属性，那么不会拷贝该属性，只会保留新值并释放旧值</td>
+</tr>
+<tr>
+<td></td>
+<td>不会触发<code>KVO</code></td>
+</tr>
+<tr>
+<td>懒加载方式的属性，必须通过存取方法来访问</td>
+<td></td>
+</tr>
+</tbody></table>
+</li>
+</ul>
+<p><strong>但是</strong> <code>KVO</code>的回调机制存在一个明显的缺陷：不会传一个<code>selector</code>或者<code>block</code>作为回调，而是必须重写<code>-addObserver:forKeyPath:options:context:</code>方法，如果存在多个属性的监听，就需要在方法里面写很多的<code>if-else</code>的判断。</p>
+<h3 id="实现多继承"><a href="#实现多继承" class="headerlink" title="实现多继承"></a>实现多继承</h3><p>当消息进入到寻找<code>备援接受者</code>阶段时，若当前接受者能找到备援对象，则将其返回，若找不到，就返回 <code>nil</code>。此时我们就可以模拟出来“多重继承”（multiple inheritance）的某些特性。在一个对象内部，可能还有一系列其他对象，该对象可经由此方法将能够处理某选择子的相关内部对象的返回，这样的话，在外界看来，好像是该对象亲自处理了这些消息似的。</p>
+<p>此步骤可参考消息消息转发流程的寻找消息<strong>备援接受者</strong>的操作，来替换消息的接受者。</p>
+<h3 id="Method-Swizzling"><a href="#Method-Swizzling" class="headerlink" title="Method Swizzling"></a>Method Swizzling</h3><p>在运行时通过修改类的分发表中<code>selector</code>对应的函数，来修改其方法的实现，实质是对 <code>IMP</code> 和&lt; code&gt;SEL&lt; code&gt; 进行交换，主要用到的函数如下：</p>
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">OBJC_EXPORT <span class="built_in">BOOL</span></span><br><span class="line"><span class="comment">/** </span></span><br><span class="line"><span class="comment">如果本类中包含一个同名的实现，则函数返回为NO</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">class_addMethod(Class _Nullable cls, SEL _Nonnull name, IMP _Nonnull imp, </span><br><span class="line">                <span class="keyword">const</span> <span class="keyword">char</span> * _Nullable types) ;</span><br><span class="line"></span><br><span class="line">OBJC_EXPORT IMP _Nullable</span><br><span class="line">class_replaceMethod(Class _Nullable cls, SEL _Nonnull name, IMP _Nonnull imp, </span><br><span class="line">                    <span class="keyword">const</span> <span class="keyword">char</span> * _Nullable types);</span><br><span class="line"></span><br><span class="line">OBJC_EXPORT <span class="keyword">void</span></span><br><span class="line">method_exchangeImplementations(Method _Nonnull m1, Method _Nonnull m2);</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">+ (<span class="keyword">void</span>)load &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">dispatch_once_t</span> onceToken;</span><br><span class="line">    <span class="built_in">dispatch_once</span>(&amp;onceToken, ^&#123;</span><br><span class="line">        Class <span class="keyword">class</span> = [<span class="keyword">self</span> <span class="keyword">class</span>];</span><br><span class="line">        SEL originalSelector = <span class="keyword">@selector</span>(original);</span><br><span class="line">        SEL swizzledSelector = <span class="keyword">@selector</span>(swizzled);</span><br><span class="line">        </span><br><span class="line">        Method originalMethod = class_getInstanceMethod(<span class="keyword">class</span>,originalSelector);</span><br><span class="line">        Method swizzledMethod = class_getInstanceMethod(<span class="keyword">class</span>,swizzledSelector);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">//judge the method named  swizzledMethod is already existed.</span></span><br><span class="line">        <span class="built_in">BOOL</span> didAddMethod = class_addMethod(<span class="keyword">class</span>, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod));</span><br><span class="line">        <span class="comment">// if swizzledMethod is already existed.</span></span><br><span class="line">        <span class="keyword">if</span> (didAddMethod) &#123;</span><br><span class="line">            class_replaceMethod(<span class="keyword">class</span>, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod));</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span> &#123;</span><br><span class="line">            method_exchangeImplementations(originalMethod, swizzledMethod);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>swizzling</code> 应该只在<code>+load</code>中完成。 在 Objective-C 的运行时中，每个类有两个方法都会自动调用。<code>+load</code> 是在一个类被初始装载时调用，<code>+initialize</code> 是在应用第一次调用该类的类方法或实例方法前调用的。两个方法都是可选的，并且只有在方法被实现的情况下才会被调用。</p>
+<p><code>swizzling</code>应该只在 <code>dispatch_once</code> 中完成,由于 <code>swizzling</code> 改变了全局的状态，所以我们需要确保每个预防措施在运行时都是可用的。原子操作就是这样一个用于确保代码只会被执行一次的预防措施，就算是在不同的线程中也能确保代码只执行一次。Grand Central Dispatch 的 <code>dispatch_once</code> 满足了所需要的需求，并且应该被当做使用<code>swizzling</code> 的初始化单例方法的标准</p>
+<ul>
+<li>实际应用场景</li>
+</ul>
+<h3 id="字典和模型的自动转换"><a href="#字典和模型的自动转换" class="headerlink" title="字典和模型的自动转换"></a>字典和模型的自动转换</h3><h4 id="字典转模型"><a href="#字典转模型" class="headerlink" title="字典转模型"></a>字典转模型</h4><p>1.调用 class_getProperty 方法获取当前 Model 的所有属性。<br>2.调用 property_copyAttributeList 获取属性列表。</p>
+<h4 id="模型转字典"><a href="#模型转字典" class="headerlink" title="模型转字典"></a>模型转字典</h4><p>1.调用 class_copyPropertyList 方法获取当前 Model 的所有属性。<br>2.调用 property_getName 获取属性名称。</p>
+
+        </div>
+
+        
+            <section class="post-copyright">
+                
+                    <p class="copyright-item">
+                        <span>Author:</span>
+                        <span>Dongdong Guo</span>
+                    </p>
+                
+                
+                
+                
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span>Do you believe in <strong>DESTINY</strong>?</span>
+                     </p>
+                
+
+            </section>
+        
+        <section class="post-tags">
+            <div>
+                <span>Tag(s):</span>
+                <span class="tag">
+                    
+                    
+                        <a href="/tags/Runtime/"># Runtime</a>
+                    
+                        
+                </span>
+            </div>
+            <div>
+                <a href="javascript:window.history.back();">back</a>
+                <span>· </span>
+                <a href="/">home</a>
+            </div>
+        </section>
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/03/25/Objective-C 引用计数原理/">Objective-C 引用计数原理</a>
+            
+            
+            <a class="next" rel="next" href="/2020/03/22/多线程/">多线程</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Dongdong Guo | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
